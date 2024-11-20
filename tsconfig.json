@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "lib": [
+        "es2017",
+        "ESNext",
+        "ESNext.Array",
+        "DOM",
+        "DOM.Iterable",
+        "WebWorker"
+      ],
+    "allowJs": true,
+    "checkJs": true,
+    "strict": false,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": ["node"],
+    "noEmit": true,
+    "maxNodeModuleJsDepth": 2
+  },
+  "include": ["**/*.js", "types", "./types.d.ts"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "TMP"
+  ]
+}

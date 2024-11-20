@@ -1,0 +1,22 @@
+## editors
+/.idea
+/.vscode
+
+## system files
+.DS_Store
+
+## npm
+/node_modules/
+/npm-debug.log
+
+## dev
+TMP
+build
+dist
+env
+
+## cloud images src folder
+cit-store/
+
+## api key
+CIT_API_KEY
