@@ -1,3 +1,5 @@
+let imsVersion = '0.0.12';
+
 export default /*html*/ `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +14,9 @@ export default /*html*/ `<!DOCTYPE html>
   <script type="importmap">
     {
       "imports": {
-        "@symbiotejs/symbiote": "https://esm.run/@symbiotejs/symbiote"
+        "@symbiotejs/symbiote": "https://cdn.jsdelivr.net/npm/@symbiotejs/symbiote@2.3.2/+esm",
+        "interactive-media-spots/lib/dataToImage.js": "https://cdn.jsdelivr.net/npm/interactive-media-spots@${imsVersion}/lib/dataToImage.js/+esm",
+        "interactive-media-spots/lib/imageToData.js": "https://cdn.jsdelivr.net/npm/interactive-media-spots@${imsVersion}/lib/imageToData.js/+esm"
       }
     }
   </script>

@@ -22,7 +22,7 @@
     "noEmit": true,
     "maxNodeModuleJsDepth": 2
   },
-  "include": ["**/*.js", "types", "./types.d.ts"],
+  "include": ["**/*.js", "types", "./types.d.ts", "interactive-media-spots"],
   "exclude": [
     "node_modules",
     "dist",

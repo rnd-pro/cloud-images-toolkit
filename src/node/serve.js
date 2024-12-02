@@ -5,26 +5,40 @@ import http from 'http';
 import CFG from './CFG.js';
 import indexHtml from '../dashboard/index.html.js';
 import esbuild from 'esbuild';
-import FolderSync from './FolderSync.js';
+import FolderSync, { checkDir } from './FolderSync.js';
 const wss = new WebSocketServer({ port: CFG.wsPort });
 
 wss.on('connection', (ws) => {
 
-  /** @type {Partial<Record<WsCmdType, (selection: string[] | Object<string, Partial<CloudImageDescriptor>>) => Promise<void>>>} */
+  /** @type {Partial<Record<WsCmdType, (selection: string[] | Object<string, Partial<CloudImageDescriptor>> | WsMsgData) => Promise<void>>>} */
   const cmdMap = {
     FETCH: async (selection) => {
       if (!Array.isArray(selection)) {
         return;
       }
       await FolderSync.fetch(selection);
-      ws.send(JSON.stringify({cmd: 'UPDATE', data: null,}));
+      ws.send(JSON.stringify({
+        cmd: 'UPDATE',
+        data: null,
+      }));
+      ws.send(JSON.stringify({
+        cmd: 'TEXT',
+        data: 'Remote images are downloaded.',
+      }));
     },
     REMOVE: async (selection) => {
       if (!Array.isArray(selection)) {
         return;
       }
       await FolderSync.remove(selection);
-      ws.send(JSON.stringify({cmd: 'UPDATE', data: null,}));
+      ws.send(JSON.stringify({
+        cmd: 'UPDATE', 
+        data: null,
+      }));
+      ws.send(JSON.stringify({
+        cmd: 'TEXT',
+        data: 'Selection is removed.',
+      }));
     },
     EDIT: async (/** @type Object<string, Partial<CloudImageDescriptor>> */ update) => {
       let data = JSON.parse(fs.readFileSync(CFG.syncDataPath).toString());
@@ -32,7 +46,41 @@ wss.on('connection', (ws) => {
         Object.assign(data[key], update[key]);
       });
       fs.writeFileSync(CFG.syncDataPath, JSON.stringify(data, null, 2));
-      ws.send(JSON.stringify({cmd: 'TEXT', data: 'Data updated.',}));
+      ws.send(JSON.stringify({
+        cmd: 'TEXT', 
+        data: 'Data updated.',
+      }));
+    },
+    SAVE_IMS: async (/** @type {WsMsgData} */ msgData) => {
+      if (!fs.existsSync(CFG.imsDataPath)) {
+        checkDir(CFG.imsDataPath);
+        fs.writeFileSync(CFG.imsDataPath, '{}');
+      }
+      let imsData = JSON.parse(fs.readFileSync(CFG.imsDataPath).toString());
+      if (imsData[msgData.hash]) {
+        ws.send(JSON.stringify({
+          cmd: 'TEXT',
+          data: 'IMS data for this configuration is already exists.',
+        }));
+      } else {
+        imsData[msgData.hash] = msgData.srcData;
+        fs.writeFileSync(CFG.imsDataPath, JSON.stringify(imsData, undefined, 2));
+        ws.send(JSON.stringify({
+          cmd: 'TEXT',
+          data: 'IMS data is saved to local project file.',
+        }));
+      }
+    },
+    PUB_DATA_IMG: async (/** @type {WsMsgData} */ msgData) => {
+      await FolderSync.saveImage(msgData.localPath, msgData.imgData);
+      ws.send(JSON.stringify({
+        cmd: 'UPDATE',
+        data: null,
+      }));
+      ws.send(JSON.stringify({
+        cmd: 'TEXT',
+        data: 'Source data image is uploaded!',
+      }));
     },
   };
 
@@ -65,7 +113,7 @@ const httpServer = http.createServer((req, res) => {
       format: 'esm',
       minify: false,
       sourcemap: false,
-      external: ['@symbiotejs/symbiote', '../node/CFG.js'],
+      external: ['@symbiotejs/symbiote', 'crypto', '../node/CFG.js'],
       write: false,
     }).outputFiles[0].text;
     res.setHeader('Content-Type', 'text/html');

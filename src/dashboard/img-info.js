@@ -1,4 +1,4 @@
-import { Symbiote, html, css } from '@symbiotejs/symbiote';
+import Symbiote, { html, css } from '@symbiotejs/symbiote';
 
 class ImgInfo extends Symbiote {
 

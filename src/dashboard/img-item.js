@@ -75,6 +75,7 @@ ImgItem.rootStyles = css`
       object-fit: contain;
       background-color: var(--img-item-bg);
       border-radius: 2px;
+      image-rendering: pixelated;
     }
 
     [name] {

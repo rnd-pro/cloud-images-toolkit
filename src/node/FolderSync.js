@@ -17,7 +17,7 @@ if (fs.existsSync(CFG.syncDataPath)) {
   imgCloudData = JSON.parse(fs.readFileSync(CFG.syncDataPath).toString());
 }
 
-function checkDir(fullPath) {
+export function checkDir(fullPath) {
   let dirPath = fullPath.split('/').slice(0, -1).join('/');
   if (!fs.existsSync(dirPath)) {
     fs.mkdirSync(dirPath, { recursive: true });
@@ -189,6 +189,19 @@ export class FolderSync {
       }
     });
     await Promise.all(promises);
+  }
+
+  /**
+   * 
+   * @param {String} path 
+   * @param {String} srcUrl // Base64 encoded image url
+   */
+  static async saveImage(path, srcUrl) {
+    checkDir(path);
+    let arrBuffer = await (await (fetch(srcUrl))).arrayBuffer();
+    fs.writeFileSync(path, Buffer.from(arrBuffer), {
+      encoding: 'binary',
+    });
   }
 
 }

@@ -8,7 +8,8 @@ import { CFG } from '../node/CFG.js';
 import {} from './img-info.js';
 import { WsClient } from './WsClient.js';
 import {} from './pop-msg.js';
-import {} from './ims-preview.js';
+import {} from './ims-composer.js';
+import { sortBySubNumber } from '../iso/sortBySubNumber.js';
 
 /** @type {Object<string, CloudImageDescriptor>} */
 let cloudImagesData;
@@ -19,6 +20,15 @@ try {
   cloudImagesData = (await import('./test-data.js')).default;
   console.warn('CIT: No cloud images data found');
   // console.error(err);
+}
+
+/**
+ * 
+ * @param {Array} arr 
+ * @returns 
+ */
+function s(arr) {
+  return arr.length > 1 ? 's' : '';
 }
 
 class CitUi extends Symbiote {
@@ -53,6 +63,14 @@ class CitUi extends Symbiote {
 
     deselectAll: () => {
       this.$.selection = [];
+    },
+
+    copySelectionJson: async () => {
+      let selection = sortBySubNumber(this.$.selection).map((path) => {
+        return this.$.renderData[path].cdnId;
+      });
+      await navigator.clipboard.writeText(JSON.stringify(selection, undefined, 2));
+      this.$.message = `Selection of ${this.$.selection.length} image${s(this.$.selection)} is copied to clipboard in JSON format`;
     },
 
     scrollToCurrent: () => {

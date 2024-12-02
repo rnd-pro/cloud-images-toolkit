@@ -11,6 +11,7 @@ declare type CloudImageDescriptor = {
 
 declare type CITConfig = {
   syncDataPath: string,
+  imsDataPath: string,
   imgSrcFolder: string,
   apiKey: string,
   apiUrl: string,
@@ -21,9 +22,16 @@ declare type CITConfig = {
   httpPort: number,
 };
 
-declare type WsCmdType = 'HELLO' | 'FETCH' | 'REMOVE' | 'UPDATE' | 'EDIT' | 'TEXT';
+declare type WsCmdType = 'HELLO' | 'FETCH' | 'REMOVE' | 'UPDATE' | 'EDIT' | 'TEXT' | 'SAVE_IMS' | 'PUB_DATA_IMG';
 
 declare type WsMsg = {
   cmd: WsCmdType,
   data: any,
 };
+
+declare type WsMsgData = {
+  localPath?: string,
+  imgData?: string,
+  hash?: string,
+  srcData?: any,
+}

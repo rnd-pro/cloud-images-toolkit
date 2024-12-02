@@ -14,6 +14,7 @@
     "@jam-do/jam-tools": "^0.2.3",
     "@symbiotejs/symbiote": "^2.3.0",
     "image-size": "^1.1.1",
+    "interactive-media-spots": "^0.0.12",
     "jam-x": "^0.6.6",
     "ws": "^8.18.0"
   },
