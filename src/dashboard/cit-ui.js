@@ -17,7 +17,7 @@ let cloudImagesData;
 try {
   cloudImagesData = await (await window.fetch(CFG.syncDataPath)).json();
 } catch(err) {
-  cloudImagesData = (await import('./test-data.js')).default;
+  cloudImagesData = {};
   console.warn('CIT: No cloud images data found');
   // console.error(err);
 }

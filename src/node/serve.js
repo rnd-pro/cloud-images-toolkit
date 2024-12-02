@@ -107,8 +107,9 @@ const httpServer = http.createServer((req, res) => {
     res.setHeader('Content-Type', 'text/javascript');
     res.end(`export const CFG = ${JSON.stringify(CFG)};export default CFG;`);
   } else if (req.method === 'GET' && req.url === '/') {
+    let entry = import.meta.url.includes('node_modules') ? './node_modules/cloud-images-toolkit/src/dashboard/cit-ui.js' : './src/dashboard/cit-ui.js';
     let js = esbuild.buildSync({
-      entryPoints: ['./src/dashboard/cit-ui.js'],
+      entryPoints: [entry],
       bundle: true,
       format: 'esm',
       minify: false,
