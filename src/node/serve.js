@@ -102,6 +102,11 @@ wss.on('connection', (ws) => {
 
 console.log(`✅ WS server started on port ${CFG.wsPort}`);
 
+if (!fs.existsSync(CFG.syncDataPath)) {
+  checkDir(CFG.syncDataPath);
+  fs.writeFileSync(CFG.syncDataPath, '{}');
+}
+
 const httpServer = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url.endsWith('CFG.js')) {
     res.setHeader('Content-Type', 'text/javascript');
