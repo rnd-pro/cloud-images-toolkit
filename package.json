@@ -1,6 +1,6 @@
 {
   "name": "cloud-images-toolkit",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Cloud images toolkit for web developers",
   "type": "module",
   "scripts": {
