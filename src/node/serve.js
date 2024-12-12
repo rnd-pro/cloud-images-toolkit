@@ -119,7 +119,7 @@ const httpServer = http.createServer((req, res) => {
       format: 'esm',
       minify: false,
       sourcemap: false,
-      external: ['@symbiotejs/symbiote', 'crypto', '../node/CFG.js'],
+      external: ['@symbiotejs/symbiote', 'crypto', '../node/CFG.js', 'interactive-media-spots/wgt/viewer'],
       write: false,
     }).outputFiles[0].text;
     res.setHeader('Content-Type', 'text/html');

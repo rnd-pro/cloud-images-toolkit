@@ -96,11 +96,11 @@ export const CIT_UI_TPL = html`
   </div>
 
   <div toolbar caption="IMS Widgets" ${{'@disabled': '!hasSelection'}}>
-    <div controls column>
-      <!--<button ${{onclick: 'onImsPreview'}}>${icon('gallery_thumbnail')}Gallery</button>
-      <button ${{onclick: 'onImsPreview'}}>${icon('photo_library')}Difference</button>
-      <button ${{onclick: 'onImsPreview'}}>${icon('panorama_photosphere')}Spherical panorama</button>-->
-      <button ${{onclick: 'onImsPreview'}}>${icon('motion_play')}Spinner animation</button>
+    <div controls column ${{onclick: 'onImsTypeSelected'}}>
+      <button type="gallery">${icon('gallery_thumbnail')}Gallery</button>
+      <button type="diff">${icon('photo_library')}Difference</button>
+      <button type="pano">${icon('panorama_photosphere')}Spherical panorama</button>
+      <button type="spinner">${icon('motion_play')}Spinner animation</button>
     </div>
   </div>
 
@@ -155,6 +155,7 @@ export const IMS_COMPOSER_TPL = html`
       <div column>
         <pre><code 
             contenteditable="true" 
+            spellcheck="false"
             ref="jsonEditor" 
             ${{oninput: 'onJsonEdit', '@error': 'jsonError'}}>{{srcData}}</code></pre>
       </div>

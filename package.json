@@ -1,12 +1,12 @@
 {
   "name": "cloud-images-toolkit",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Cloud images toolkit for web developers",
   "type": "module",
   "scripts": {
     "prepare": "git config core.hooksPath .git-hooks || echo 'Not in a git repo'",
     "types": "tsc -p ts.hook.json",
-    "sync": "node ./node_modules/@jam-do/jam-tools/node/imgCloudSync.js"
+    "start": "node ./src/node/serve.js"
   },
   "author": "team@rnd-pro.com",
   "license": "MIT",
@@ -14,7 +14,7 @@
     "@jam-do/jam-tools": "^0.2.3",
     "@symbiotejs/symbiote": "^2.3.0",
     "image-size": "^1.1.1",
-    "interactive-media-spots": "^0.0.13",
+    "interactive-media-spots": "^0.0.16",
     "jam-x": "^0.6.6",
     "ws": "^8.18.0"
   },

@@ -1,8 +1,11 @@
-import Symbiote, { html, css} from '@symbiotejs/symbiote';
+import Symbiote from '@symbiotejs/symbiote';
 import { IMS_COMPOSER_CSS } from './styles.js';
 import { IMS_COMPOSER_TPL } from './templates.js';
 import { CFG } from '../node/CFG.js';
-export { ImsViewer } from './ims-viewer.js';
+export { ImsViewer } from 'interactive-media-spots/wgt/viewer';
+import { ImsDiffData } from 'interactive-media-spots/wgt/diff/ImsDiffData.js';
+import { ImsGalleryData } from 'interactive-media-spots/wgt/gallery/ImsGalleryData.js';
+import { ImsPanoData } from 'interactive-media-spots/wgt/pano/ImsPanoData.js';
 import { ImsSpinnerData } from 'interactive-media-spots/wgt/spinner/ImsSpinnerData.js';
 import { dataToImage } from 'interactive-media-spots/lib/dataToImage.js';
 import { sortBySubNumber } from '../iso/sortBySubNumber.js';
@@ -91,7 +94,7 @@ export class ImsComposer extends Symbiote {
   }
 
   get htmlEmbedCode() {
-    return html`<ims-${this.$.imsType} src-data="${this.$.imsDataUrl}"></ims-${this.$.imsType}>`;
+    return /*html*/ `<ims-${this.$.imsType} src-data="${this.$.imsDataUrl}"></ims-${this.$.imsType}>`;
   }
 
   async #applyData(srcData) {
@@ -122,32 +125,47 @@ export class ImsComposer extends Symbiote {
       }
     });
 
-    let srcDataTimeout;
-    this.sub('^selection', (/** @type {String[]} */ selection) => {
-      if (srcDataTimeout) {
-        window.clearTimeout(srcDataTimeout);
-      }
-      srcDataTimeout = window.setTimeout(async () => {
-        selection = [...sortBySubNumber(selection)];
+    this.sub('^currentImsType', (/** @type {String} */ val) => {
+      console.log(val);
+      if (!val) return;
 
-        let cfg = new ImsSpinnerData({
-          baseUrl: CFG.baseUrl,
-          variants: CFG.variants.filter((vnt) => {
-            return !Number.isNaN(parseFloat(vnt));
-          }),
-        });
-  
-        selection.forEach((uid) => {
-          /** @type {Object<string, CloudImageDescriptor>} */
-          let data = this.$['^renderData'];
-          cfg.cdnIdList.push(data[uid].cdnId);
-        });
-  
-        cfg.coverUrl = CFG.baseUrl + cfg.cdnIdList[0] + '/public';
-  
-        this.$.srcData = JSON.stringify(cfg, undefined, 2);
-        this.#applyData(cfg);
-      }, 100);
+      let selection = [...sortBySubNumber(this.$['^selection'])];
+      if (!selection.length) return;
+
+      let typeMap = {
+        diff: ImsDiffData,
+        gallery: ImsGalleryData,
+        pano: ImsPanoData,
+        spinner: ImsSpinnerData,
+      };
+
+      let typeData = typeMap[val];
+
+      let srcData = new typeData({
+        baseUrl: CFG.baseUrl,
+        variants: CFG.variants.filter((vnt) => {
+          return !Number.isNaN(parseFloat(vnt));
+        }),
+      });
+
+      selection.forEach((uid) => {
+        /** @type {Object<string, CloudImageDescriptor>} */
+        let data = this.$['^renderData'];
+        srcData.cdnIdList.push(data[uid].cdnId);
+      });
+
+      if (val === 'spinner') {
+        srcData.coverUrl = CFG.baseUrl + srcData.cdnIdList[0] + '/public';
+      }
+
+      if (val === 'pano') {
+        srcData.srcList = [
+          CFG.baseUrl + srcData.cdnIdList[0] + '/public',
+        ];
+      }
+
+      this.$.srcData = JSON.stringify(srcData, undefined, 2);
+      this.#applyData(srcData);
     });
   }
 }

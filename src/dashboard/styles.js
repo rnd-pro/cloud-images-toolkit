@@ -364,10 +364,10 @@ ims-composer {
     }
   }
 
-  ims-spinner {
+  ims-spinner, ims-diff, ims-gallery, ims-pano {
     max-height: calc(100% - 50px);
     height: 400px;
-    background-color: #fff;
+    background-color: #ccc;
     border-radius: 4px;
   }
 

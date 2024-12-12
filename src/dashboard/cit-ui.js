@@ -45,6 +45,7 @@ class CitUi extends Symbiote {
     message: '',
     altDescription: '',
     imsActive: false,
+    currentImsType: '',
     
     onFilter: (e) => {
       this.$.renderData = filterData(cloudImagesData, e.target.value);
@@ -154,8 +155,12 @@ class CitUi extends Symbiote {
       this.$.message = `Embed code copied to clipboard.`;
     },
 
-    onImsPreview: () => {
-      this.$.imsActive = true;
+    onImsTypeSelected: (e) => {
+      let imsType = e.target.getAttribute('type');
+      if (imsType) {
+        this.$.currentImsType = imsType;
+        this.$.imsActive = true;
+      }
     },
   }
 
