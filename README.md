@@ -3,7 +3,8 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 
 ## Features
 - Automatic synchronization between local images and CDN
-- Git-based image collection tracking and collaboration
+- Git-based image collection data tracking and collaboration
+- Flat structured cloud data to local folders mapping
 - Adaptive image embed code generation
 - Smart local caching - download cloud images only when needed
 - Built-in image management UI application

@@ -157,7 +157,11 @@ export const IMS_COMPOSER_TPL = html`
             contenteditable="true" 
             spellcheck="false"
             ref="jsonEditor" 
-            ${{oninput: 'onJsonEdit', '@error': 'jsonError'}}>{{srcData}}</code></pre>
+            ${{
+              oninput: 'onJsonEdit',
+              '@error': 'jsonError',
+              textContent: 'srcData',
+            }}></code></pre>
       </div>
     <div>
   </div>
