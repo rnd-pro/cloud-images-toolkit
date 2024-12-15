@@ -1,6 +1,7 @@
 import { html } from '@symbiotejs/symbiote';
 import { icon } from './icon.js';
 import { CFG } from '../node/CFG.js';
+export { BackBtn } from './back-btn.js';
 
 export const CIT_UI_TPL = html`
 <link 
@@ -20,6 +21,7 @@ export const CIT_UI_TPL = html`
   panel 
   tiles 
   ref="tiles">
+  <back-btn></back-btn>
   <div 
     itemize="foldersRenderData" 
     item-tag="folder-item" 

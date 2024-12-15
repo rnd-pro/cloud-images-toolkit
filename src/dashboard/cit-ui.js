@@ -2,7 +2,6 @@ import Symbiote from '@symbiotejs/symbiote';
 import { CIT_UI_CSS } from './styles.js';
 import { CIT_UI_TPL } from './templates.js';
 import { getImgCode } from '../iso/getImgCode.js';
-// import { filterData } from '../iso/filterData.js';
 import { CFG } from '../node/CFG.js';
 import { WsClient } from './WsClient.js';
 import {} from './pop-msg.js';
@@ -39,6 +38,8 @@ class CitUi extends Symbiote {
     altDescription: '',
     imsActive: false,
     currentImsType: '',
+    folderHistory: [],
+    historyBackAvailable: false,
     
     onFilter: (e) => {
       this.$.filterSubstr = e.target.value;
@@ -114,9 +115,9 @@ class CitUi extends Symbiote {
     },
 
     reloadData: async () => {
-      this.$.message = `Reloading data...`;
-      await this.updateCloudImagesData();
-      this.$.message = `Data reloaded.`;
+      this.$.filterSubstr = '';
+      this.$.folderHistory = [];
+      // this.$.message = `Data reloaded.`;
     },
 
     onAltInput: (e) => {
@@ -153,13 +154,13 @@ class CitUi extends Symbiote {
         this.$.imsActive = true;
       }
     },
-  }
 
-  async updateCloudImagesData() {
-    let cloudImagesData = await getCloudImagesData();
-    this.$.filesRenderData = {...cloudImagesData};
-    this.$.selection = [];
-    this.$.current = null;
+    onHistoryBack: () => {
+      this.$.folderHistory.pop();
+      let target = this.$.folderHistory[this.$.folderHistory.length - 1];
+      this.$.filterSubstr = target || '';
+      this.notify('folderHistory');
+    },
   }
 
   renderCallback() {
@@ -186,13 +187,13 @@ class CitUi extends Symbiote {
       this.$.selectionSize = val.length;
       this.$.hasSelection = val.length > 0;
     });
-    // this.sub('filesRenderData', (val) => {
-    //   this.$.filteredSize = Object.keys(val).length;
-    // });
+    this.sub('folderHistory', (val) => {
+      this.$.historyBackAvailable = !!val.length;
+    });
 
     WsClient.onUpdate(async () => {
       this.$.message = `Processing of ${this.$.selection.length} items is done.`;
-      await this.updateCloudImagesData();
+      this.$.filterSubstr = '';
     });
 
     WsClient.onText((text) => {

@@ -225,6 +225,10 @@ cit-ui {
       transform: translateX(-4px);
     }
 
+    &[hidden] {
+      display: none;
+    }
+
     &[round] {
       display: inline-flex;
       align-items: center;
