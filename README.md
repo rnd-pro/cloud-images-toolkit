@@ -14,7 +14,8 @@ A powerful toolkit for managing image collections directly in your codebase, wit
   - 360° object views
   - And more...
 - Native Cloudflare Images API support
-
+- Data-to-image encoding for the uniform asset control workflow (store your widgets data directly in image CDN)
+ 
 ## Installation
 
 ```bash
