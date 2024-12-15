@@ -19,9 +19,16 @@ export const CIT_UI_TPL = html`
 <div 
   panel 
   tiles 
-  itemize="renderData" 
-  item-tag="img-item" 
-  ref="tiles"></div>
+  ref="tiles">
+  <div 
+    itemize="foldersRenderData" 
+    item-tag="folder-item" 
+    itemize-container></div>
+  <div 
+    itemize="filesRenderData" 
+    item-tag="img-item" 
+    itemize-container></div>
+</div>
 
 <div panel column>
 
@@ -33,7 +40,7 @@ export const CIT_UI_TPL = html`
     <input 
       type="text"
       placeholder="Filter by path pattern"
-      ${{oninput: 'onFilter'}}>
+      ${{oninput: 'onFilter', value: 'filterSubstr'}}>
     <div controls>
       <button
         ${{onclick: 'selectAll'}}>

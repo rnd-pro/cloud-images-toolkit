@@ -150,6 +150,10 @@ cit-ui {
     }
   }
 
+  [itemize-container] {
+    display: contents;
+  }
+
   input {
     height: 32px;
     min-width: 32px;

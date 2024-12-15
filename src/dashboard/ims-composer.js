@@ -12,6 +12,7 @@ import { sortBySubNumber } from '../iso/sortBySubNumber.js';
 // import imageToData from 'interactive-media-spots/lib/imageToData.js';
 import { getHash } from '@jam-do/jam-tools/iso/getHash.js';
 import { WsClient } from './WsClient.js';
+import { getCloudImagesData } from './getCloudImagesData.js';
 
 export class ImsComposer extends Symbiote {
 
@@ -125,8 +126,8 @@ export class ImsComposer extends Symbiote {
       }
     });
 
-    this.sub('^currentImsType', (/** @type {String} */ val) => {
-      console.log(val);
+    this.sub('^currentImsType', async (/** @type {String} */ val) => {
+      // console.log(val);
       if (!val) return;
 
       let selection = [...sortBySubNumber(this.$['^selection'])];
@@ -148,11 +149,10 @@ export class ImsComposer extends Symbiote {
         }),
       });
 
-      selection.forEach((uid) => {
-        /** @type {Object<string, CloudImageDescriptor>} */
-        let data = this.$['^renderData'];
-        srcData.cdnIdList.push(data[uid].cdnId);
-      });
+      let imgData = await getCloudImagesData();
+      for (let uid of selection) {
+        srcData.cdnIdList.push(imgData[uid].cdnId);
+      }
 
       if (val === 'spinner') {
         srcData.coverUrl = CFG.baseUrl + srcData.cdnIdList[0] + '/public';

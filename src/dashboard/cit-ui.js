@@ -1,26 +1,18 @@
 import Symbiote from '@symbiotejs/symbiote';
 import { CIT_UI_CSS } from './styles.js';
 import { CIT_UI_TPL } from './templates.js';
-import {} from './img-item.js';
 import { getImgCode } from '../iso/getImgCode.js';
-import { filterData } from '../iso/filterData.js';
+// import { filterData } from '../iso/filterData.js';
 import { CFG } from '../node/CFG.js';
-import {} from './img-info.js';
 import { WsClient } from './WsClient.js';
 import {} from './pop-msg.js';
 import {} from './ims-composer.js';
 import { sortBySubNumber } from '../iso/sortBySubNumber.js';
-
-/** @type {Object<string, CloudImageDescriptor>} */
-let cloudImagesData;
-
-try {
-  cloudImagesData = await (await window.fetch(CFG.syncDataPath)).json();
-} catch(err) {
-  cloudImagesData = {};
-  console.warn('CIT: No cloud images data found');
-  // console.error(err);
-}
+import { getFilesAndFolders } from './getFilesAndFolders.js';
+import { getCloudImagesData } from './getCloudImagesData.js';
+export {} from './img-item.js';
+export {} from './folder-item.js';
+export {} from './img-info.js';
 
 /**
  * 
@@ -34,7 +26,8 @@ function s(arr) {
 class CitUi extends Symbiote {
 
   init$ = {
-    renderData: cloudImagesData,
+    filesRenderData: {},
+    foldersRenderData: {},
     selection: [],
     selectionSize: 0,
     hasSelection: false,
@@ -48,9 +41,7 @@ class CitUi extends Symbiote {
     currentImsType: '',
     
     onFilter: (e) => {
-      this.$.renderData = filterData(cloudImagesData, e.target.value);
-      this.$.selection = [];
-      this.$.current = null;
+      this.$.filterSubstr = e.target.value;
     },
 
     selectAll: () => {
@@ -68,7 +59,7 @@ class CitUi extends Symbiote {
 
     copySelectionJson: async () => {
       let selection = sortBySubNumber(this.$.selection).map((path) => {
-        return this.$.renderData[path].cdnId;
+        return this.$.filesRenderData[path].cdnId;
       });
       await navigator.clipboard.writeText(JSON.stringify(selection, undefined, 2));
       this.$.message = `Selection of ${this.$.selection.length} image${s(this.$.selection)} is copied to clipboard in JSON format`;
@@ -138,7 +129,7 @@ class CitUi extends Symbiote {
       /** @type {Object<string, Partial<CloudImageDescriptor>>} */
       let update = {};
       this.$.selection.forEach((key) => {
-        this.$.renderData[key].alt = this.$.altDescription;
+        this.$.filesRenderData[key].alt = this.$.altDescription;
         update[key] = {
           alt: this.$.altDescription,
         };
@@ -147,7 +138,7 @@ class CitUi extends Symbiote {
         cmd: 'EDIT',
         data: update,
       });
-      this.notify('renderData');
+      this.notify('filesRenderData');
     },
 
     onEmbedCopy: async () => {
@@ -165,8 +156,8 @@ class CitUi extends Symbiote {
   }
 
   async updateCloudImagesData() {
-    cloudImagesData = await (await window.fetch(CFG.syncDataPath)).json();
-    this.$.renderData = {...cloudImagesData};
+    let cloudImagesData = await getCloudImagesData();
+    this.$.filesRenderData = {...cloudImagesData};
     this.$.selection = [];
     this.$.current = null;
   }
@@ -179,13 +170,25 @@ class CitUi extends Symbiote {
       this.ref.imgInfo.set$(val.localCtx.store, true);
       this.$.embedCode = getImgCode(val.$.cdnId, CFG.variants, val.$.alt);
     });
+    this.sub('filterSubstr', async (val) => {
+      let cloudImagesData = await getCloudImagesData();
+      let rData = getFilesAndFolders(cloudImagesData, CFG.imgSrcFolder, val); 
+      this.$.filesRenderData = rData.files;
+      this.$.foldersRenderData = rData.folders;
+      this.$.selection = [];
+      this.$.current = null;
+      let totalFoldersContentSize = Object.keys(rData.folders).reduce((acc, folder) => {  
+        return acc + Object.keys(rData.folders[folder].content).length;
+      }, 0);
+      this.$.filteredSize = Object.keys(rData.files).length + totalFoldersContentSize;
+    });
     this.sub('selection', (val) => {
       this.$.selectionSize = val.length;
       this.$.hasSelection = val.length > 0;
     });
-    this.sub('renderData', (val) => {
-      this.$.filteredSize = Object.keys(val).length;
-    });
+    // this.sub('filesRenderData', (val) => {
+    //   this.$.filteredSize = Object.keys(val).length;
+    // });
 
     WsClient.onUpdate(async () => {
       this.$.message = `Processing of ${this.$.selection.length} items is done.`;
