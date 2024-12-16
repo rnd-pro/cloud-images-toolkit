@@ -3,7 +3,7 @@
  * 
  * @param {String} id 
  * @param {String} [alt] 
- * @param {String[] | Number[]} [breakpoints] 
+ * @param {String[]} [breakpoints]
  * @returns {String}
  */
 export function getImgCode(id, breakpoints = [
@@ -16,9 +16,11 @@ export function getImgCode(id, breakpoints = [
   '2048',
 ], alt = '') {
  
-  let srcset = breakpoints.filter((bp) => {
-    return typeof bp === 'number' || !isNaN(parseInt(bp));
-  }).map((bp) => {
+  breakpoints = breakpoints.filter((bp) => {    
+    return !isNaN(parseInt(bp));
+  });
+
+  let srcset = breakpoints.map((bp) => {
     return `https://rnd-pro.com/idn/${id}/${bp} ${bp}w`;
   }).join(', ');
 
