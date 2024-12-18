@@ -149,8 +149,7 @@ cit-ui {
 
   [tiles] {
     display: inline-flex;
-    justify-content: flex-start;
-    align-items: flex-start;
+    justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
     

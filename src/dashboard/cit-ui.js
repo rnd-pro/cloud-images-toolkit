@@ -72,11 +72,11 @@ class CitUi extends Symbiote {
     },
 
     scrollTop: () => {
-      this.ref.tiles.scrollTop = 0;
+      this.ref.tiles_wrapper.scrollTop = 0;
     },
 
     scrollBottom: () => {
-      this.ref.tiles.scrollTop = this.ref.tiles.scrollHeight;
+      this.ref.tiles_wrapper.scrollTop = this.ref.tiles_wrapper.scrollHeight;
     },
 
     clearCurrent: () => {
@@ -85,7 +85,7 @@ class CitUi extends Symbiote {
     },
 
     onInvertBg: () => {
-      this.ref.tiles.classList.toggle('inverted');
+      this.ref.tiles_wrapper.classList.toggle('inverted');
     },
 
     onVariantClick: (e) => {

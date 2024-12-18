@@ -17,9 +17,9 @@ export const CIT_UI_TPL = html`
   <button round ${{onclick: 'reloadData'}}>${icon('refresh')}</button>
 </div>
 
-<div tiles-wrapper>
-  <div tiles ref="tiles">
-  <back-btn></back-btn>
+<div tiles-wrapper ref="tiles_wrapper">
+  <div tiles>
+    <back-btn></back-btn>
     <div 
       itemize="foldersRenderData" 
       item-tag="folder-item" 
