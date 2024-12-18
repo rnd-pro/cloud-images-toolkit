@@ -45,7 +45,7 @@ export default class ImgItem extends Symbiote {
 
 ImgItem.rootStyles = css`
   img-item {
-    display: block;
+    display: inline-block;
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.4);
     color: var(--color-2);

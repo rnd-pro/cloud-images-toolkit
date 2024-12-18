@@ -13,6 +13,7 @@ const imgTypes = CFG.imgTypes.length ? CFG.imgTypes : [
 ];
 
 function getImgCloudData() {
+  /** @type {Object<string, CloudImageDescriptor>} */
   let imgCloudData = {};
   if (fs.existsSync(CFG.syncDataPath)) {
     imgCloudData = JSON.parse(fs.readFileSync(CFG.syncDataPath).toString());
@@ -59,7 +60,11 @@ async function processSrcFolder(folderPath) {
   let images = findAllImages(folderPath);
   let hasErrors = false;
   
-  let wait = (ms) => {
+  /**
+   * @param {number} ms 
+   * @returns {Promise<void>}
+   */
+  let waitFor = (ms) => {
     return new Promise((resolve) => {
       setTimeout(resolve, ms);
     });
@@ -105,14 +110,14 @@ async function processSrcFolder(folderPath) {
         checkDir(CFG.syncDataPath);
         fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
       } catch (error) {
-        console.error('Error uploading image: ', error);
+        console.error('Error uploading image: ', imgPath);
         hasErrors = true;
       }
 
       if (idx === images.length - 1) {
         if (hasErrors && retries > 0) {
           retries--;
-          await wait(2000);
+          await waitFor(2000);
           await processSrcFolder(folderPath);
         } else {
           retries = 3;
@@ -141,8 +146,11 @@ export class FolderSync {
     });
   }
 
-  static writeSyncData() {
-    let imgCloudData = getImgCloudData();
+  /**
+   * @param {Object<string, CloudImageDescriptor>} imgCloudData 
+   * @returns {Promise<void>}
+   */
+  static writeSyncData(imgCloudData) {
     let timeout = 400;
     if (writeFileTimeout) {
       clearTimeout(writeFileTimeout);
@@ -182,7 +190,7 @@ export class FolderSync {
             resolve();
           }));
         } catch (error) {
-          console.error('Error fetching image: ', error);
+          console.error('Error fetching image: ', imgPath);
         }
       }
     });
@@ -209,9 +217,9 @@ export class FolderSync {
             if (fs.existsSync(imgPath)) {
               fs.unlinkSync(imgPath);
             }
-            await this.writeSyncData();
+            await this.writeSyncData(imgCloudData);
           } catch (error) {
-            console.error('Error deleting image: ', error);
+            console.error('Error deleting image: ', imgPath);
           }
           resolve();
         }));

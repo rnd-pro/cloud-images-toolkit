@@ -17,19 +17,18 @@ export const CIT_UI_TPL = html`
   <button round ${{onclick: 'reloadData'}}>${icon('refresh')}</button>
 </div>
 
-<div 
-  panel 
-  tiles 
-  ref="tiles">
+<div tiles-wrapper>
+  <div tiles ref="tiles">
   <back-btn></back-btn>
-  <div 
-    itemize="foldersRenderData" 
-    item-tag="folder-item" 
-    itemize-container></div>
-  <div 
-    itemize="filesRenderData" 
-    item-tag="img-item" 
-    itemize-container></div>
+    <div 
+      itemize="foldersRenderData" 
+      item-tag="folder-item" 
+      itemize-container></div>
+    <div 
+      itemize="filesRenderData" 
+      item-tag="img-item" 
+      itemize-container></div>
+  </div>
 </div>
 
 <div panel column>

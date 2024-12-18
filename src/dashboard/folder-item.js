@@ -18,6 +18,7 @@ export class FolderItem extends Symbiote {
   onDblClick = () => {
     this.$['^folderHistory'] = [...this.$['^folderHistory'], this.$._KEY_];
     this.$['^filterSubstr'] = this.$['^folderHistory'].join('/') + '/';
+    this.$['^scrollTop']();
   }
 
   renderCallback() {
@@ -41,7 +42,7 @@ export class FolderItem extends Symbiote {
 
 FolderItem.rootStyles = css`
 folder-item {
-  display: block;
+  display: inline-block;
   box-sizing: border-box;
   background-color: rgba(0, 0, 0, 0.4);
   color: var(--color-2);

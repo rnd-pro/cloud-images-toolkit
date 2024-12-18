@@ -132,17 +132,30 @@ cit-ui {
     }
   }
 
-  [tiles] {
+  [tiles-wrapper] {
+    display: flex;
     justify-content: center;
-    flex-wrap: wrap;
-    content-visibility: auto;
-    box-shadow: inset 0 0 16px 0 rgba(0, 0, 0, 0.6);
-    border-radius: 6px;
-    padding-top: 10px;
-    padding-bottom: 10px;
+    align-items: flex-start;
+    height: 100%;
+    overflow: auto;
+    gap: 10px;
     background-color: rgba(255, 255, 255, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     border-top: 2px solid rgba(0, 0, 0, 0.7);
+    box-shadow: inset 0 0 16px 0 rgba(0, 0, 0, 0.6);
+    border-radius: 6px;
+    content-visibility: auto;
+  }
+
+  [tiles] {
+    display: inline-flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+    
+    border-radius: 6px;
+    padding: 10px;
 
     --img-item-bg: #212121;
     &.inverted {
