@@ -115,9 +115,8 @@ class CitUi extends Symbiote {
     },
 
     reloadData: async () => {
-      this.$.filterSubstr = '';
       this.$.folderHistory = [];
-      // this.$.message = `Data reloaded.`;
+      this.$.filterSubstr = '';
     },
 
     onAltInput: (e) => {
@@ -157,8 +156,7 @@ class CitUi extends Symbiote {
 
     onHistoryBack: () => {
       this.$.folderHistory.pop();
-      let target = this.$.folderHistory[this.$.folderHistory.length - 1];
-      this.$.filterSubstr = target || '';
+      this.$.filterSubstr = this.$.folderHistory.length ? this.$.folderHistory.join('/') + '/' : '';
       this.notify('folderHistory');
     },
   }
@@ -193,6 +191,7 @@ class CitUi extends Symbiote {
 
     WsClient.onUpdate(async () => {
       this.$.message = `Processing of ${this.$.selection.length} items is done.`;
+      this.$.folderHistory = [];
       this.$.filterSubstr = '';
     });
 

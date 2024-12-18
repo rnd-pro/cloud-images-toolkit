@@ -16,8 +16,8 @@ export class FolderItem extends Symbiote {
   }
 
   onDblClick = () => {
-    this.$['^filterSubstr'] = this.$._KEY_;
     this.$['^folderHistory'] = [...this.$['^folderHistory'], this.$._KEY_];
+    this.$['^filterSubstr'] = this.$['^folderHistory'].join('/') + '/';
   }
 
   renderCallback() {
