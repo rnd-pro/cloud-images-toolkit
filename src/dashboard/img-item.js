@@ -20,6 +20,10 @@ export default class ImgItem extends Symbiote {
       this.$['^current'] = this;
     }
 
+    this.ondblclick = () => {
+      window.open(CFG.baseUrl + this.$.cdnId + '/' + CFG.variants[CFG.variants.length - 1], '_blank');
+    };
+
     this.sub('^selection', (val) => {
       this.classList.toggle('selected', val.includes(this.$._KEY_));
     });

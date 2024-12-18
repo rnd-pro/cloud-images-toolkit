@@ -12,9 +12,12 @@ const imgTypes = CFG.imgTypes.length ? CFG.imgTypes : [
   'svg',
 ];
 
-let imgCloudData = {};
-if (fs.existsSync(CFG.syncDataPath)) {
-  imgCloudData = JSON.parse(fs.readFileSync(CFG.syncDataPath).toString());
+function getImgCloudData() {
+  let imgCloudData = {};
+  if (fs.existsSync(CFG.syncDataPath)) {
+    imgCloudData = JSON.parse(fs.readFileSync(CFG.syncDataPath).toString());
+  }
+  return imgCloudData;
 }
 
 export function checkDir(fullPath) {
@@ -50,51 +53,74 @@ function findAllImages(initFolderPath) {
   return result;
 }
 
+let retries = 3;
 async function processSrcFolder(folderPath) {
+  let imgCloudData = getImgCloudData();
   let images = findAllImages(folderPath);
-  // console.log(images);
-  images.forEach(async (imgPath) => {
-    if (imgCloudData[imgPath]) {
-      // console.log('Image already exists: ', imgPath);
-      return;
-    }
-    console.log('Uploading image: ', imgPath);
-
-    try {
-      let imgBytes = fs.readFileSync(imgPath);
-      let imgDimensions = imageSize(imgPath);
+  let hasErrors = false;
   
-      const formData = new FormData();
-      formData.append('file', new File([imgBytes], imgPath.split('/').pop()));
-      formData.append('metadata', JSON.stringify({
-        localPath: imgPath,
-      }));
-      const response = await (await fetch(CFG.apiUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${CFG.apiKey}`,
-        },
-        body: formData,
-      })).json();
-      
-      /** @type {CloudImageDescriptor} */
-      let imgDesc = {
-        cdnId: response.result.id,
-        uploadDate: response.result.uploaded,
-        imageName: imgPath.split('/').pop(),
-        alt: '',
-        width: imgDimensions.width.toString(),
-        height: imgDimensions.height.toString(),
-        aspectRatio: getAspectRatio(imgDimensions.width, imgDimensions.height),
-        srcFormat: imgPath.split('.').pop().toUpperCase(),
-      };
-      imgCloudData[imgPath] = imgDesc;
-      checkDir(CFG.syncDataPath);
-      fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
-    } catch (error) {
-      console.error('Error uploading image: ', error);
-      return;
-    }
+  let wait = (ms) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  };
+
+  return new Promise((resolve) => {
+    images.forEach(async (imgPath, idx) => {
+      if (imgCloudData[imgPath]) {
+        // console.log('Image already exists: ', imgPath);
+        return;
+      }
+      console.log('Uploading image: ', imgPath);
+  
+      try {
+        let imgBytes = fs.readFileSync(imgPath);
+        let imgDimensions = imageSize(imgPath);
+    
+        const formData = new FormData();
+        formData.append('file', new File([imgBytes], imgPath.split('/').pop()));
+        formData.append('metadata', JSON.stringify({
+          localPath: imgPath,
+        }));
+        const response = await (await fetch(CFG.apiUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${CFG.apiKey}`,
+          },
+          body: formData,
+        })).json();
+        
+        /** @type {CloudImageDescriptor} */
+        let imgDesc = {
+          cdnId: response.result.id,
+          uploadDate: response.result.uploaded,
+          imageName: imgPath.split('/').pop(),
+          alt: '',
+          width: imgDimensions.width.toString(),
+          height: imgDimensions.height.toString(),
+          aspectRatio: getAspectRatio(imgDimensions.width, imgDimensions.height),
+          srcFormat: imgPath.split('.').pop().toUpperCase(),
+        };
+        imgCloudData[imgPath] = imgDesc;
+        checkDir(CFG.syncDataPath);
+        fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
+      } catch (error) {
+        console.error('Error uploading image: ', error);
+        hasErrors = true;
+      }
+
+      if (idx === images.length - 1) {
+        if (hasErrors && retries > 0) {
+          retries--;
+          await wait(2000);
+          await processSrcFolder(folderPath);
+        } else {
+          retries = 3;
+          console.log(hasErrors ? 'Uploading finished with errors' : 'Uploading finished successfully');
+          resolve();
+        }
+      }
+    });
   });
 }
 
@@ -116,6 +142,7 @@ export class FolderSync {
   }
 
   static writeSyncData() {
+    let imgCloudData = getImgCloudData();
     let timeout = 400;
     if (writeFileTimeout) {
       clearTimeout(writeFileTimeout);
@@ -136,6 +163,7 @@ export class FolderSync {
    * @param {string[]} selection
    */
   static async fetch(selection) {
+    let imgCloudData = getImgCloudData();
     let promises = [];
     selection.forEach(async (imgPath) => {
       if (imgCloudData[imgPath] && !fs.existsSync(imgPath)) {
@@ -165,6 +193,7 @@ export class FolderSync {
    * @param {string[]} selection
    */
   static async remove(selection) {
+    let imgCloudData = getImgCloudData();
     let promises = [];
     selection.forEach((imgPath) => {
       if (imgCloudData[imgPath]) {
