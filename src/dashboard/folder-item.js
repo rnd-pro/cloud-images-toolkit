@@ -4,15 +4,15 @@ export class FolderItem extends Symbiote {
 
   onClick = () => {
     this.classList.toggle('selected');
+    let sel = this.$['^selection'];
     this.$.content.forEach((key) => {
-      let sel = this.$['^selection'];
       if (this.classList.contains('selected')) {
         sel.push(key);
       } else {
         sel = sel.filter((k) => k !== key);
       }
-      this.$['^selection'] = sel;
     });
+    this.$['^selection'] = sel;
   }
 
   onDblClick = () => {
@@ -27,6 +27,8 @@ export class FolderItem extends Symbiote {
     this.sub('^selection', (/** @type {Array<string>} */ val) => {
       if (!val.length) {
         this.classList.remove('selected');
+      } else if (this.$['^selection'].includes(this.$.content[0])) {
+        this.classList.add('selected');
       }
     });
   }

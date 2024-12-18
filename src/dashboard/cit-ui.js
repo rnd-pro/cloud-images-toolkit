@@ -46,12 +46,11 @@ class CitUi extends Symbiote {
     },
 
     selectAll: () => {
-      this.ref.tiles.querySelectorAll('img-item').forEach((item) => {
-        if (!this.$.selection.includes(item.$._KEY_)) {
-          this.$.selection.push(item.$._KEY_);
-        }
-        this.notify('selection');
+      let selection = Object.keys(this.$.filesRenderData);
+      Object.values(this.$.foldersRenderData).forEach((folder) => {
+        selection = [...selection, ...folder.content];
       });
+      this.$.selection = selection;
     },
 
     deselectAll: () => {
