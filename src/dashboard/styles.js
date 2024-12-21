@@ -145,6 +145,11 @@ cit-ui {
     box-shadow: inset 0 0 16px 0 rgba(0, 0, 0, 0.6);
     border-radius: 6px;
     content-visibility: auto;
+
+    --img-item-bg: #212121;
+    &.inverted {
+      --img-item-bg: #eee;
+    }
   }
 
   [tiles] {
@@ -155,11 +160,6 @@ cit-ui {
     
     border-radius: 6px;
     padding: 10px;
-
-    --img-item-bg: #212121;
-    &.inverted {
-      --img-item-bg: #eee;
-    }
   }
 
   [itemize-container] {
