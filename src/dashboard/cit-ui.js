@@ -24,6 +24,9 @@ function s(arr) {
 
 class CitUi extends Symbiote {
 
+  /** @type {number} */
+  #filterTimeout;
+
   init$ = {
     filesRenderData: {},
     foldersRenderData: {},
@@ -42,7 +45,18 @@ class CitUi extends Symbiote {
     historyBackAvailable: false,
     
     onFilter: (e) => {
-      this.$.filterSubstr = e.target.value;
+      if (this.#filterTimeout) {  
+        clearTimeout(this.#filterTimeout);
+      }
+      this.#filterTimeout = window.setTimeout(() => {
+        if (e.target.value.length < 2) {
+          return;
+        }
+        let val = e.target.value.trim();
+        if (val) {
+          this.$.filterSubstr = val;
+        }
+      }, 400);
     },
 
     selectAll: () => {
