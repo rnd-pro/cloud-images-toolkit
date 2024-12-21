@@ -154,16 +154,6 @@ export class ImsComposer extends Symbiote {
         srcData.cdnIdList.push(imgData[uid].cdnId);
       }
 
-      if (val === 'spinner') {
-        srcData.coverUrl = CFG.baseUrl + srcData.cdnIdList[0] + '/public';
-      }
-
-      if (val === 'pano') {
-        srcData.srcList = [
-          CFG.baseUrl + srcData.cdnIdList[0] + '/public',
-        ];
-      }
-
       this.$.srcData = JSON.stringify(srcData, undefined, 2);
       this.#applyData(srcData);
     });

@@ -49,13 +49,10 @@ class CitUi extends Symbiote {
         clearTimeout(this.#filterTimeout);
       }
       this.#filterTimeout = window.setTimeout(() => {
-        if (e.target.value.length < 2) {
+        if (e.target.value.length === 1) {
           return;
         }
-        let val = e.target.value.trim();
-        if (val) {
-          this.$.filterSubstr = val;
-        }
+        this.$.filterSubstr = e.target.value.trim();
       }, 400);
     },
 
