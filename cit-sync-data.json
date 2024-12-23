@@ -1,1 +1,132 @@
-{}
+{
+  "./cit-store/test/IMG_20181206_155152.jpg": {
+    "cdnId": "617406e6-791b-4b24-8ca1-eb050f481e00",
+    "uploadDate": "2024-12-12T02:10:16.355Z",
+    "imageName": "IMG_20181206_155152.jpg",
+    "alt": "",
+    "width": "4032",
+    "height": "3024",
+    "aspectRatio": "4/3",
+    "srcFormat": "JPG"
+  },
+  "./cit-store/test/digital_painting_little_mouse_shop_inside_the_wall.jpg": {
+    "cdnId": "eee93302-8e14-4c6e-c44d-c714ad347900",
+    "uploadDate": "2024-12-12T02:10:17.311Z",
+    "imageName": "digital_painting_little_mouse_shop_inside_the_wall.jpg",
+    "alt": "",
+    "width": "6144",
+    "height": "3072",
+    "aspectRatio": "2/1",
+    "srcFormat": "JPG"
+  },
+  "./cit-store/test/IMG_20181205_113205.jpg": {
+    "cdnId": "230cbd86-cc22-4e66-56be-8fcf6440f300",
+    "uploadDate": "2024-12-12T02:10:17.741Z",
+    "imageName": "IMG_20181205_113205.jpg",
+    "alt": "",
+    "width": "4032",
+    "height": "3024",
+    "aspectRatio": "4/3",
+    "srcFormat": "JPG"
+  },
+  "./cit-store/Duck-Hunt-dog-laughing-e1456414229400.jpg": {
+    "cdnId": "721449e1-4745-4053-5696-87458c60d800",
+    "uploadDate": "2024-12-15T10:22:14.106Z",
+    "imageName": "Duck-Hunt-dog-laughing-e1456414229400.jpg",
+    "alt": "",
+    "width": "650",
+    "height": "367",
+    "aspectRatio": "650/367",
+    "srcFormat": "JPG"
+  },
+  "./cit-store/download.png": {
+    "cdnId": "be12df0d-c5ac-4342-1a69-fa5f0316fb00",
+    "uploadDate": "2024-12-15T10:22:28.833Z",
+    "imageName": "download.png",
+    "alt": "",
+    "width": "3440",
+    "height": "1440",
+    "aspectRatio": "43/18",
+    "srcFormat": "PNG"
+  },
+  "./cit-store/TEST2/IMG_0862.JPG": {
+    "cdnId": "1bdd54e6-d19f-4b50-a94d-64ff4080b500",
+    "uploadDate": "2024-12-15T10:23:19.006Z",
+    "imageName": "IMG_0862.JPG",
+    "alt": "",
+    "width": "1280",
+    "height": "959",
+    "aspectRatio": "1280/959",
+    "srcFormat": "JPG"
+  },
+  "./cit-store/TEST2/IMG_20181013_152303.jpg": {
+    "cdnId": "2b4f11d6-891d-4a8a-2c49-11e1a829c700",
+    "uploadDate": "2024-12-15T10:23:20.212Z",
+    "imageName": "IMG_20181013_152303.jpg",
+    "alt": "",
+    "width": "4608",
+    "height": "3456",
+    "aspectRatio": "4/3",
+    "srcFormat": "JPG"
+  },
+  "./cit-store/141041.jpg": {
+    "cdnId": "048364ce-ea9a-4ff9-aa98-a7333fac8400",
+    "uploadDate": "2024-12-15T10:24:19.547Z",
+    "imageName": "141041.jpg",
+    "alt": "",
+    "width": "2560",
+    "height": "1600",
+    "aspectRatio": "8/5",
+    "srcFormat": "JPG"
+  },
+  "./cit-store/glados-portal-43854-1920x1080.jpg": {
+    "cdnId": "936cc990-bd82-45b3-521f-1a6cf6269f00",
+    "uploadDate": "2024-12-15T10:24:20.139Z",
+    "imageName": "glados-portal-43854-1920x1080.jpg",
+    "alt": "",
+    "width": "1920",
+    "height": "1080",
+    "aspectRatio": "16/9",
+    "srcFormat": "JPG"
+  },
+  "./cit-store/TEST2/inner/download (9).png": {
+    "cdnId": "7ed16e1e-ce8a-4eb6-826a-d7568078ec00",
+    "uploadDate": "2024-12-15T11:31:59.718Z",
+    "imageName": "download (9).png",
+    "alt": "",
+    "width": "102",
+    "height": "102",
+    "aspectRatio": "1/1",
+    "srcFormat": "PNG"
+  },
+  "./cit-store/TEST2/inner/download.png": {
+    "cdnId": "ee32dba1-58cd-4eb4-f7bc-a5619edb0a00",
+    "uploadDate": "2024-12-15T11:31:59.835Z",
+    "imageName": "download.png",
+    "alt": "",
+    "width": "512",
+    "height": "512",
+    "aspectRatio": "1/1",
+    "srcFormat": "PNG"
+  },
+  "./cit-store/TEST2/inner/download (8).png": {
+    "cdnId": "ca90dc70-f293-44f4-7659-86ca5991e800",
+    "uploadDate": "2024-12-15T11:31:59.877Z",
+    "imageName": "download (8).png",
+    "alt": "",
+    "width": "512",
+    "height": "512",
+    "aspectRatio": "1/1",
+    "srcFormat": "PNG"
+  },
+  "./cit-store/TEST2/inner/download (7).png": {
+    "cdnId": "8c5ee806-09f3-4b77-56d3-9293d98e7000",
+    "uploadDate": "2024-12-15T11:32:00.058Z",
+    "imageName": "download (7).png",
+    "alt": "",
+    "width": "512",
+    "height": "512",
+    "aspectRatio": "1/1",
+    "srcFormat": "PNG"
+  }
+}
