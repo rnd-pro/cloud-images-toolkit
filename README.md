@@ -5,6 +5,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 - Automatic synchronization between local images and CDN
 - Git-based image collection data tracking and collaboration
 - Flat structured cloud data to local folders mapping
+- Automatic image sorting for ordered sequences
 - Adaptive image embed code generation
 - Smart local caching - download cloud images only when needed
 - Built-in image management UI application
@@ -15,7 +16,18 @@ A powerful toolkit for managing image collections directly in your codebase, wit
   - And more...
 - Native Cloudflare Images API support
 - Data-to-image encoding for the uniform asset control workflow (store your widgets data directly in image CDN)
- 
+
+## Coming soon features
+- Video publishing & video collections view
+- IMS collections view & management
+- Advanced IMS editor
+- Built-in AI image generation support and prompt editor
+- Image modifications and transformations:
+  - Watermarks
+  - Filters
+  - Cropping
+  - Rotating
+
 ## Installation
 
 ```bash

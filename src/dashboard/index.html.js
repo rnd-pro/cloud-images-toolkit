@@ -1,4 +1,4 @@
-let imsVersion = '0.0.23';
+let imsVersion = '0.1.0';
 
 export default /*html*/ `<!DOCTYPE html>
 <html lang="en">
