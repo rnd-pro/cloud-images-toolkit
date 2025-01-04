@@ -1,6 +1,8 @@
 # Cloud Images Toolkit
 A powerful toolkit for managing image collections directly in your codebase, with CDN integration and advanced features.
 
+![CIT Dashboard screenshot](https://rnd-pro.com/idn/a5cfd499-366b-4c68-2439-b5166f44d600/1024)
+
 ## Features
 - Automatic synchronization between local images and CDN
 - Git-based image collection data tracking and collaboration
