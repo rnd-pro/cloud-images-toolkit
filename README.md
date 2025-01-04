@@ -31,7 +31,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 ## Installation
 
 ```bash
-npm install cloud-images-toolkit
+npm install --save-dev cloud-images-toolkit
 ```
 
 ## Configuration
@@ -51,6 +51,11 @@ Create a `cit-config.json` file in your project root:
   "httpPort": 8081
 }
 ```
+This configuration example is set to work with the [Cloudflare Images API](https://developers.cloudflare.com/images/). For other CDN and API providers, you may set custom endpoints or your own API-adapters.
+
+To use custom URLs for your images, you need to enable this feature and configure it in your service provider dashboard. 
+
+In case you using Cloudflare Images, you can find the instructions [here](https://developers.cloudflare.com/images/manage-images/serve-images/serve-from-custom-domains/).
 
 > **Important**: Add your image folder and API key file to `.gitignore`
 
@@ -61,7 +66,19 @@ Start the toolkit server:
 node ./node_modules/cloud-images-toolkit/src/node/serve.js
 ```
 
-Then open the dashboard at: `http://localhost:8081`
+Or add `cit` script to your `package.json`:
+```json
+"scripts": {
+  "cit": "node ./node_modules/cloud-images-toolkit/src/node/serve.js"
+}
+```
+
+And then use npm script:
+```bash
+npm run cit
+```
+
+Then open the dashboard at: `http://localhost:<httpPort>`
 
 ## License
 
