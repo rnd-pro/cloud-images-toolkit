@@ -29,6 +29,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
   - Filters
   - Cropping
   - Rotating
+- Additional tag-based grouping and filtering
 
 ## Installation
 
