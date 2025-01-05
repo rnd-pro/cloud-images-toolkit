@@ -1,7 +1,7 @@
 # Cloud Images Toolkit
 A powerful toolkit for managing image collections directly in your codebase, with CDN integration and advanced features.
 
-![CIT Dashboard screenshot](https://rnd-pro.com/idn/a5cfd499-366b-4c68-2439-b5166f44d600/1024)
+![CIT Dashboard screenshot](https://rnd-pro.com/idn/f4ec5143-82fd-4dc1-2d76-6c9d7a752000/1024)
 
 ## Features
 - Automatic synchronization between local images and CDN
@@ -82,6 +82,16 @@ npm run cit
 ```
 
 Then open the dashboard at: `http://localhost:<httpPort>`
+
+## Variants
+
+Variants are very important part of the CIT workflow. They are necessary for the adaptive image embed code generation and image size control. CIT uses the convention of the variant names to generate the image URLs, based on the image width.
+
+For example, if you have a variant named `120`, CIT will generate the URL for the image with the width of 120px.
+
+It's a good practice to create variants for the screens with different DPI. For example, you can create a variant for the image with the width of `120` and the DPI of 1.0, and another variant for the image with the width of `240` and the DPI of 2.0.
+
+In case you using the Cloudflare Images API, you need to create the variants in your Cloudflare Images account. More details you can find [here](https://developers.cloudflare.com/images/manage-images/serve-images/serve-uploaded-images/).
 
 ## License
 
