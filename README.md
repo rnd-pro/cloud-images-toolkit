@@ -1,9 +1,11 @@
 # Cloud Images Toolkit
+
 A powerful toolkit for managing image collections directly in your codebase, with CDN integration and advanced features.
 
 ![CIT Dashboard screenshot](https://rnd-pro.com/idn/f4ec5143-82fd-4dc1-2d76-6c9d7a752000/1024)
 
 ## Features
+
 - Automatic synchronization between local images and CDN
 - Git-based image collection data tracking and collaboration
 - Flat structured cloud data to local folders mapping
@@ -20,6 +22,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 - Data-to-image encoding for the uniform asset control workflow (store your widgets data directly in image CDN)
 
 ## Coming soon features
+
 - Video publishing & video collections view
 - IMS collections view & management
 - Advanced IMS editor
@@ -30,6 +33,11 @@ A powerful toolkit for managing image collections directly in your codebase, wit
   - Cropping
   - Rotating
 - Additional tag-based grouping and filtering
+
+## Requirements
+
+- Node.js 20.0.0+
+- npm 10.0.0+
 
 ## Installation
 
