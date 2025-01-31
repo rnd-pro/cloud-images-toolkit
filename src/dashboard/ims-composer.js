@@ -143,7 +143,7 @@ export class ImsComposer extends Symbiote {
       let typeData = typeMap[val];
 
       let srcData = new typeData({
-        baseUrl: CFG.baseUrl,
+        urlTemplate: CFG.imgUrlTemplate,
         variants: CFG.variants.filter((vnt) => {
           return !Number.isNaN(parseFloat(vnt));
         }),

@@ -90,14 +90,6 @@ wss.on('connection', (ws) => {
     cmdMap[wsm.cmd]?.(wsm.data);
   });
 
-  // /** @type {WsMsg} */
-  // let wsm = {cmd: 'HELLO', data: '🟢 Cloud Images Toolkit is online'};
-  // ws.send(JSON.stringify(wsm));
-
-  // ws.on('close', () => {
-  //   console.log('🔴 WS connection closed');
-  // });
-
 });
 
 console.log(`✅ WS server started on port ${CFG.wsPort}`);

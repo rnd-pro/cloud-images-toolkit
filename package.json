@@ -1,7 +1,7 @@
 {
   "name": "cloud-images-toolkit",
-  "version": "0.0.25",
-  "description": "Cloud images toolkit for web developers",
+  "version": "0.1.0",
+  "description": "CIT - Cloud Images Toolkit for web developers",
   "type": "module",
   "scripts": {
     "prepare": "git config core.hooksPath .git-hooks || echo 'Not in a git repo'",
@@ -14,7 +14,7 @@
     "@jam-do/jam-tools": "^0.2.3",
     "@symbiotejs/symbiote": "^2.3.0",
     "image-size": "^1.1.1",
-    "interactive-media-spots": "^0.1.5",
+    "interactive-media-spots": "^0.2.0",
     "jam-x": "^0.6.6",
     "ws": "^8.18.0"
   },

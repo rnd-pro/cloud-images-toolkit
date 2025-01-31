@@ -3,6 +3,7 @@ import { CIT_UI_CSS } from './styles.js';
 import { CIT_UI_TPL } from './templates.js';
 import { getImgCode } from '../iso/getImgCode.js';
 import { CFG } from '../node/CFG.js';
+import { fillTpl } from '../iso/fillTpl.js';
 import { WsClient } from './WsClient.js';
 import {} from './pop-msg.js';
 import {} from './ims-composer.js';
@@ -102,7 +103,10 @@ class CitUi extends Symbiote {
     onVariantClick: (e) => {
       let variant = e.target.getAttribute('variant');
       if (variant) {
-        window.open(`${CFG.baseUrl + this.$.current.$.cdnId + '/' + variant}`, '_blank');
+        window.open(fillTpl(CFG.imgUrlTemplate, {
+          UID: this.$.current.$.cdnId,
+          VARIANT: variant,
+        }), '_blank');
       }
     },
 

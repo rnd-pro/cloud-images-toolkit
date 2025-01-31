@@ -1,11 +1,26 @@
 import Symbiote, { html, css } from '@symbiotejs/symbiote';
 import { CFG } from '../node/CFG.js';
+import { fillTpl } from '../iso/fillTpl.js';
+import { getVariantsNum } from '../iso/getVariantsNum.js';
 
 export default class ImgItem extends Symbiote {
 
   init$ = {
     cdnId: '',
     preview: '',
+  }
+
+  /**
+   * 
+   * @param {Boolean} [isPreview] 
+   * @returns 
+   */
+  #getImgUrl(isPreview = false) {
+    let variants = getVariantsNum(CFG.variants);
+    return fillTpl(CFG.previewUrlTemplate || CFG.imgUrlTemplate, {
+      UID: this.$.cdnId,
+      VARIANT: isPreview ? variants[0] : variants[variants.length - 1],
+    });
   }
 
   renderCallback() {
@@ -21,7 +36,7 @@ export default class ImgItem extends Symbiote {
     }
 
     this.ondblclick = () => {
-      window.open(CFG.baseUrl + this.$.cdnId + '/' + CFG.variants[CFG.variants.length - 1], '_blank');
+      window.open(this.#getImgUrl(), '_blank');
     };
 
     this.sub('^selection', (val) => {
@@ -37,7 +52,7 @@ export default class ImgItem extends Symbiote {
     });
 
     this.sub('cdnId', (val) => {
-      this.$.preview = CFG.baseUrl + val + '/' + CFG.variants[0];
+      this.$.preview = this.#getImgUrl(true);
       this.title = this.$._KEY_;
     });
   }

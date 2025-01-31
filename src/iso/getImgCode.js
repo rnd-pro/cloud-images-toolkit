@@ -1,3 +1,6 @@
+import { CFG } from '../node/CFG.js';
+import { fillTpl } from './fillTpl.js';
+import { getVariantsNum } from './getVariantsNum.js';
 
 /**
  * 
@@ -16,24 +19,30 @@ export function getImgCode(id, breakpoints = [
   '2048',
 ], alt = '') {
  
-  breakpoints = breakpoints.filter((bp) => {    
-    return !isNaN(parseInt(bp));
-  });
+  let bpArr = getVariantsNum(breakpoints);
 
-  let srcset = breakpoints.map((bp) => {
-    return `https://rnd-pro.com/idn/${id}/${bp} ${bp}w`;
+  let srcset = bpArr.map((bp) => {
+    return `${fillTpl(CFG.imgUrlTemplate, {
+      UID: id,
+      VARIANT: bp,
+    })} ${bp}w`;
   }).join(', ');
 
   let sizes = breakpoints.map((bp) => {
     return `(max-width: ${bp}px) ${bp}px`;
   }).join(', ');
 
+  let maxSize = breakpoints[breakpoints.length - 1];
+
   return /*html*/ `<img 
   loading="lazy"
   decoding="async"
-  src="https://rnd-pro.com/idn/${id}/max" 
+  src="${fillTpl(CFG.imgUrlTemplate, {
+    UID: id,
+    VARIANT: maxSize,
+  })}"
   srcset="${srcset}" 
-  sizes="${sizes}" 
+  sizes="${sizes}"
   alt="${alt}" />`;
 };
 

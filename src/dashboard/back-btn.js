@@ -1,5 +1,5 @@
-import Symbiote, {html, css} from '@symbiotejs/symbiote';
-import {icon} from './icon.js';
+import Symbiote, { html, css } from '@symbiotejs/symbiote';
+import { icon } from './icon.js';
 
 export class BackBtn extends Symbiote {
 

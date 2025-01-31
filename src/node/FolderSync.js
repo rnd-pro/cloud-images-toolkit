@@ -2,6 +2,7 @@ import fs from 'fs';
 import CFG from './CFG.js';
 import { getAspectRatio } from '../iso/getAspectRatio.js';
 import imageSize from 'image-size';
+import { fillTpl } from '../iso/fillTpl.js';
 
 const imgTypes = CFG.imgTypes.length ? CFG.imgTypes : [
   'png',
@@ -87,7 +88,10 @@ async function processSrcFolder(folderPath) {
         formData.append('metadata', JSON.stringify({
           localPath: imgPath,
         }));
-        const response = await (await fetch(CFG.apiUrl, {
+        let uploadUrl = fillTpl(CFG.uploadUrlTemplate, {
+          PROJECT: CFG.projectId,
+        });
+        const response = await (await fetch(uploadUrl, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${CFG.apiKey}`,
@@ -176,7 +180,10 @@ export class FolderSync {
     selection.forEach(async (imgPath) => {
       if (imgCloudData[imgPath] && !fs.existsSync(imgPath)) {
         try {
-          let imgBytes = await (await fetch(CFG.apiUrl + '/' + imgCloudData[imgPath].cdnId + '/blob', {
+          let imgBytes = await (await fetch(fillTpl(CFG.fetchUrlTemplate, {
+            UID: imgCloudData[imgPath].cdnId,
+            PROJECT: CFG.projectId,
+          }), {
             method: 'GET',
             headers: {
               'Authorization': `Bearer ${CFG.apiKey}`,
@@ -207,7 +214,10 @@ export class FolderSync {
       if (imgCloudData[imgPath]) {
         promises.push(new Promise(async (resolve) => {
           try {
-            await fetch(CFG.apiUrl + '/' + imgCloudData[imgPath].cdnId, {
+            await fetch(fillTpl(CFG.removeUrlTemplate, {
+              UID: imgCloudData[imgPath].cdnId,
+              PROJECT: CFG.projectId,
+            }), {
               method: 'DELETE',
               headers: {
                 'Authorization': `Bearer ${CFG.apiKey}`,
