@@ -1,6 +1,6 @@
 {
   "name": "cloud-images-toolkit",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "CIT - Cloud Images Toolkit for web developers",
   "type": "module",
   "scripts": {
