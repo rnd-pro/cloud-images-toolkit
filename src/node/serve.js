@@ -6,6 +6,8 @@ import CFG from './CFG.js';
 import indexHtml from '../dashboard/index.html.js';
 import esbuild from 'esbuild';
 import FolderSync, { checkDir } from './FolderSync.js';
+import { getPath } from './getPath.js';
+
 const wss = new WebSocketServer({ port: CFG.wsPort });
 
 wss.on('connection', (ws) => {
@@ -104,9 +106,10 @@ const httpServer = http.createServer((req, res) => {
     res.setHeader('Content-Type', 'text/javascript');
     res.end(`export const CFG = ${JSON.stringify(CFG)};export default CFG;`);
   } else if (req.method === 'GET' && req.url === '/') {
-    let entry = import.meta.url.includes('node_modules') ? './node_modules/cloud-images-toolkit/src/dashboard/cit-ui.js' : './src/dashboard/cit-ui.js';
+    let entryUrl = getPath('./src/dashboard/cit-ui.js');
+    console.log('entryUrl', entryUrl);
     let js = esbuild.buildSync({
-      entryPoints: [entry],
+      entryPoints: [entryUrl],
       bundle: true,
       format: 'esm',
       minify: false,
