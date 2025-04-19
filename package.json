@@ -10,6 +10,9 @@
   },
   "author": "team@rnd-pro.com",
   "license": "MIT",
+  "bin": {
+    "cit": "./src/node/serve.js"
+  },
   "dependencies": {
     "@jam-do/jam-tools": "^0.2.3",
     "@symbiotejs/symbiote": "^2.3.0",

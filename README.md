@@ -42,7 +42,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 ## Installation
 
 ```bash
-npm install --save-dev cloud-images-toolkit
+npm install -g cloud-images-toolkit
 ```
 
 ## Configuration
@@ -77,6 +77,12 @@ In case you using Cloudflare Images, you can find the instructions [here](https:
 ## Usage
 
 Start the toolkit server:
+```bash
+cit
+```
+
+Or:
+
 ```bash
 node ./node_modules/cloud-images-toolkit/src/node/serve.js
 ```
