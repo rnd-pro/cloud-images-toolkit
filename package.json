@@ -1,6 +1,6 @@
 {
   "name": "cloud-images-toolkit",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "CIT - Cloud Images Toolkit for web developers",
   "type": "module",
   "scripts": {
@@ -11,7 +11,7 @@
   "author": "team@rnd-pro.com",
   "license": "MIT",
   "bin": {
-    "cit": "./src/node/serve.js"
+    "cit": "./bin/cit.js"
   },
   "dependencies": {
     "@jam-do/jam-tools": "^0.2.3",

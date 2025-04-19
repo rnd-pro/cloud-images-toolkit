@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 // @ts-ignore (namespace collision with "ws" package?)
 import { WebSocketServer } from 'ws';
 import fs from 'fs';
