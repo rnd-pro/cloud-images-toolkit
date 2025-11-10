@@ -145,7 +145,7 @@ export const IMS_COMPOSER_TPL = html`
           <input 
             type="text" 
             placeholder="Local file path..."
-            ${{value: 'srcDataImageLocalPath'}}>
+            ${{value: 'srcDataImageLocalPath', oninput: 'onSrcDataImageLocalPathInput'}}>
           <div controls>
             <img src-data-img ${{src: 'dataImageSrc'}}>
             <button ${{onclick: 'onDataImagePublish', disabled: '!ableToSave'}}>${icon('upload_file')}Publish data as image</button>

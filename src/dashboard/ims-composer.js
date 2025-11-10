@@ -10,7 +10,7 @@ import { ImsSpinnerData } from 'interactive-media-spots/wgt/spinner/ImsSpinnerDa
 import { dataToImage } from 'interactive-media-spots/lib/dataToImage.js';
 import { sortBySubNumber } from '../iso/sortBySubNumber.js';
 // import imageToData from 'interactive-media-spots/lib/imageToData.js';
-import { getHash } from '@jam-do/jam-tools/iso/getHash.js';
+import { getHash } from 'jsda-kit/iso/getHash.js';
 import { WsClient } from './WsClient.js';
 import { getCloudImagesData } from './getCloudImagesData.js';
 
@@ -74,6 +74,12 @@ export class ImsComposer extends Symbiote {
       this.$['^message'] = 'Saving...';
     },
 
+    onSrcDataImageLocalPathInput: (e) => {
+      this.$.srcDataImageLocalPath = e.target.value;
+      console.log(this.$.srcDataImageLocalPath);
+      this.$.ableToSave = true;
+    },
+
     onDataImagePublish: async () => {
       this.$.savedHashes = [...this.$.savedHashes, this.$.currentHash];
       this.$.ableToSave = false;
@@ -85,6 +91,7 @@ export class ImsComposer extends Symbiote {
         },
       });
       this.$['^message'] = 'Publishing to CDN...';
+      this.$.ableToSave = false;
     },
 
     onEmbedCodeCopy: async () => {
@@ -113,7 +120,7 @@ export class ImsComposer extends Symbiote {
     // console.log(this.$.currentHash);
     this.$.ableToSave = !this.$.savedHashes.includes(this.$.currentHash);
     if (!this.$.srcDataImageLocalPath || this.$.ableToSave) {
-      this.$.srcDataImageLocalPath = `${CFG.imgSrcFolder}ims-data-images/${srcData.imsType}/${Date.now()}.png`;
+      this.$.srcDataImageLocalPath = `${CFG.imgSrcFolder}ims-data-images/${srcData.imsType}_v${srcData.version}/${(new Date()).toISOString().split('T')[0] + '_' + this.$.currentHash.slice(0, 5)}.png`;
     }
   }
 

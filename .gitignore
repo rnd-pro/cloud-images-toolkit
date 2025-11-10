@@ -1,6 +1,7 @@
 ## editors
 /.idea
 /.vscode
+/.agicoder
 
 ## system files
 .DS_Store
@@ -14,9 +15,13 @@ TMP
 build
 dist
 env
+cit
 
 ## cloud images src folder
 cit-store/
 
 ## api key
 CIT_API_KEY
+
+/cit-config.json
+
