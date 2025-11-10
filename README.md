@@ -1,5 +1,8 @@
 # Cloud Images Toolkit
 
+[![npm version](https://badge.fury.io/js/cloud-images-toolkit.svg)](https://badge.fury.io/js/cloud-images-toolkit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A powerful toolkit for managing image collections directly in your codebase, with CDN integration and advanced features.
 
 ![CIT Dashboard screenshot](https://rnd-pro.com/idn/f4ec5143-82fd-4dc1-2d76-6c9d7a752000/1024)
