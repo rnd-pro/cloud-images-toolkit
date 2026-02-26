@@ -2,10 +2,9 @@ import Symbiote, { html, css } from '@symbiotejs/symbiote';
 import { icon } from './icon.js';
 
 export class PopMsg extends Symbiote {
-  init$ = {
-    close: () => {
-      this.$['^message'] = '';
-    }
+
+  onClose() {
+    this.$['^message'] = '';
   }
 
   renderCallback() {
@@ -48,7 +47,7 @@ PopMsg.rootStyles = css`
 PopMsg.template = html`
   <div>{{^message}}</div>
   <div>
-    <button round message ${{onclick: 'close'}}>${icon('close')}</button>
+    <button round message ${{onclick: 'onClose'}}>${icon('close')}</button>
   </div>
 `;
 

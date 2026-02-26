@@ -1,4 +1,5 @@
 let imsVersion = '0.2.0';
+let symbioteVersion = '3.0.4';
 
 export default /*html*/ `<!DOCTYPE html>
 <html lang="en">
@@ -14,7 +15,7 @@ export default /*html*/ `<!DOCTYPE html>
   <script type="importmap">
     {
       "imports": {
-        "@symbiotejs/symbiote": "https://cdn.jsdelivr.net/npm/@symbiotejs/symbiote@2.3.2/+esm",
+        "@symbiotejs/symbiote": "https://cdn.jsdelivr.net/npm/@symbiotejs/symbiote@${symbioteVersion}/+esm",
         "interactive-media-spots/wgt/viewer": "https://cdn.jsdelivr.net/npm/interactive-media-spots@${imsVersion}/wgt/viewer/index.js/+esm",
         "interactive-media-spots/lib/dataToImage.js": "https://cdn.jsdelivr.net/npm/interactive-media-spots@${imsVersion}/lib/dataToImage.js/+esm",
         "interactive-media-spots/lib/imageToData.js": "https://cdn.jsdelivr.net/npm/interactive-media-spots@${imsVersion}/lib/imageToData.js/+esm"

@@ -1,6 +1,6 @@
 {
   "name": "cloud-images-toolkit",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "CIT - Cloud Images Toolkit for web developers",
   "type": "module",
   "scripts": {
@@ -14,7 +14,7 @@
     "cit": "./bin/cit.js"
   },
   "dependencies": {
-    "@symbiotejs/symbiote": "^2.3.0",
+    "@symbiotejs/symbiote": "^3.0.4",
     "image-size": "^1.1.1",
     "interactive-media-spots": "^0.2.1",
     "jsda-kit": "^0.4.13",
