@@ -1,4 +1,4 @@
-let imsVersion = '0.2.0';
+let imsVersion = '0.2.2';
 let symbioteVersion = '3.0.4';
 
 export default /*html*/ `<!DOCTYPE html>
