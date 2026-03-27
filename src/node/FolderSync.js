@@ -81,7 +81,7 @@ async function processSrcFolder(folderPath) {
   
       try {
         let imgBytes = fs.readFileSync(imgPath);
-        let imgDimensions = imageSize(imgPath);
+        let imgDimensions = imageSize(new Uint8Array(imgBytes));
     
         const formData = new FormData();
         formData.append('file', new File([imgBytes], imgPath.split('/').pop()));
