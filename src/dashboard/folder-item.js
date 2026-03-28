@@ -41,7 +41,7 @@ export class FolderItem extends Symbiote {
 }
 
 FolderItem.rootStyles = css`
-folder-item {
+cit-folder-item {
   display: inline-block;
   box-sizing: border-box;
   background-color: rgba(0, 0, 0, 0.4);
@@ -142,6 +142,6 @@ FolderItem.template = html`
 <div name>{{_KEY_}}</div>
 `;
 
-FolderItem.reg('folder-item');
+FolderItem.reg('cit-folder-item');
 
 export default FolderItem;

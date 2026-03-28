@@ -170,4 +170,4 @@ export class ImsComposer extends Symbiote {
 ImsComposer.rootStyles = IMS_COMPOSER_CSS;
 ImsComposer.template = IMS_COMPOSER_TPL;
 
-ImsComposer.reg('ims-composer');
+ImsComposer.reg('cit-ims-composer');

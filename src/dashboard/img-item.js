@@ -59,7 +59,7 @@ export default class ImgItem extends Symbiote {
 }
 
 ImgItem.rootStyles = css`
-  img-item {
+  cit-img-item {
     display: inline-block;
     box-sizing: border-box;
     background-color: rgba(0, 0, 0, 0.4);
@@ -112,4 +112,4 @@ ImgItem.template = html`
   <div name>{{imageName}}</div>
 `;
 
-ImgItem.reg('img-item');
+ImgItem.reg('cit-img-item');

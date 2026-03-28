@@ -20,7 +20,7 @@ class ImgInfo extends Symbiote {
 }
 
 ImgInfo.rootStyles = css`
-  img-info {
+  cit-img-info {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -40,7 +40,7 @@ ImgInfo.template = html`
   </div>
 `;
 
-ImgInfo.reg('img-info');
+ImgInfo.reg('cit-img-info');
 
 
 

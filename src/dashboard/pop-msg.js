@@ -19,7 +19,7 @@ export class PopMsg extends Symbiote {
 }
 
 PopMsg.rootStyles = css`
-  pop-msg {
+  cit-pop-msg {
     display: grid;
     grid-template-columns: 1fr min-content;
     gap: 20px;
@@ -51,4 +51,4 @@ PopMsg.template = html`
   </div>
 `;
 
-PopMsg.reg('pop-msg');
+PopMsg.reg('cit-pop-msg');

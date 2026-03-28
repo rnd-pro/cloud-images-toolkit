@@ -14,7 +14,7 @@ export class BackBtn extends Symbiote {
 }
 
 BackBtn.rootStyles = css`
-back-btn {
+cit-back-btn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -45,4 +45,4 @@ back-btn {
 
 BackBtn.template = html`${icon('arrow_back')}`;
 
-BackBtn.reg('back-btn');
+BackBtn.reg('cit-back-btn');

@@ -19,14 +19,14 @@ export const CIT_UI_TPL = html`
 
 <div tiles-wrapper ref="tiles_wrapper">
   <div tiles>
-    <back-btn></back-btn>
+    <cit-back-btn></cit-back-btn>
     <div 
       itemize="foldersRenderData" 
-      item-tag="folder-item" 
+      item-tag="cit-folder-item" 
       itemize-container></div>
     <div 
       itemize="filesRenderData" 
-      item-tag="img-item" 
+      item-tag="cit-img-item" 
       itemize-container></div>
   </div>
 </div>
@@ -76,7 +76,7 @@ export const CIT_UI_TPL = html`
   </div>
 
   <div toolbar caption="Current Image Info" ${{'@disabled': '!current'}}>
-    <img-info ref="imgInfo"></img-info>
+    <cit-img-info ref="imgInfo"></cit-img-info>
   </div>
 
   <div toolbar caption="Images Description" ${{'@disabled': '!hasSelection'}}>
@@ -118,10 +118,10 @@ export const CIT_UI_TPL = html`
 
   <div footer>&copy; ${new Date().getFullYear()} <a href="https://rnd-pro.com">rnd-pro.com</a></div>
 
-  <pop-msg></pop-msg>
+  <cit-pop-msg></cit-pop-msg>
   
 </div>
-<ims-composer></ims-composer>
+<cit-ims-composer></cit-ims-composer>
 `;
 
 export const IMS_COMPOSER_TPL = html`

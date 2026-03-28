@@ -288,7 +288,7 @@ cit-ui {
 `;
 
 export const IMS_COMPOSER_CSS = css`
-ims-composer {
+cit-ims-composer {
   display: flex;
   justify-content: center;
   align-items: center;
