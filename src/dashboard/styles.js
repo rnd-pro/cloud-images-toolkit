@@ -8,6 +8,11 @@ export const CIT_UI_CSS = css`
   --color-4: rgb(102, 102, 102);
 }
 
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
 cit-ui {
   -ms-overflow-style: none;
   scrollbar-width: none; 
@@ -150,7 +155,67 @@ cit-ui {
     &.inverted {
       --img-item-bg: #eee;
     }
+
+    [empty-state] {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: rgba(255, 255, 255, 0.3);
+      gap: 16px;
+
+      &[hidden] {
+        display: none;
+      }
+
+      svg {
+        height: 64px;
+        width: 64px;
+        fill: currentColor;
+      }
+
+      [title] {
+        font-size: 24px;
+        font-weight: 300;
+      }
+
+      [sub] {
+        font-size: 14px;
+        opacity: 0.7;
+      }
+    }
+
+    [loader] {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(4px);
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 30px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &[hidden] {
+        display: none;
+      }
+
+      svg {
+        height: 64px;
+        width: 64px;
+        fill: #00ffc8;
+        transform-origin: center;
+        animation: spin 2s linear infinite;
+      }
+    }
   }
+
 
   [tiles] {
     display: inline-flex;

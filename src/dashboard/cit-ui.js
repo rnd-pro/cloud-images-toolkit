@@ -31,6 +31,8 @@ class CitUi extends Symbiote {
   init$ = {
     filesRenderData: {},
     foldersRenderData: {},
+    isLoading: false,
+    hasItems: true,
     selection: [],
     selectionSize: 0,
     hasSelection: false,
@@ -44,6 +46,9 @@ class CitUi extends Symbiote {
     currentImsType: '',
     folderHistory: [],
     historyBackAvailable: false,
+    wsStatus: 'connecting',
+    wsStatusIcon: 'sync',
+    wsStatusColor: 'var(--color-4)',
     
     onFilter: (e) => {
       if (this.#filterTimeout) {  
@@ -75,6 +80,20 @@ class CitUi extends Symbiote {
       });
       await navigator.clipboard.writeText(JSON.stringify(selection, undefined, 2));
       this.$.message = `Selection of ${this.$.selection.length} image${s(this.$.selection)} is copied to clipboard in JSON format`;
+    },
+
+    sortSelectionByNumber: () => {
+      let sel = [...this.$.selection];
+      sel = sortBySubNumber(sel);
+      this.$.selection = sel;
+      this.$.message = 'Selection sorted logically by number';
+    },
+
+    sortSelectionByAlpha: () => {
+      let sel = [...this.$.selection];
+      sel.sort((a, b) => a.localeCompare(b));
+      this.$.selection = sel;
+      this.$.message = 'Selection sorted alphabetically';
     },
 
     scrollToCurrent: () => {
@@ -112,6 +131,7 @@ class CitUi extends Symbiote {
 
     onRemove: async () => {
       if (window.confirm(`🟡 This will remove selected images from:\n\n- CDN\n- Local disk\n- Data file entries\n\n Are you sure?`)) {
+        this.$.isLoading = true;
         this.$.message = `Removing ${this.$.selection.length} image${this.$.selection.length > 1 ? 's' : ''}...`;
         await WsClient.send({
           cmd: 'REMOVE',
@@ -121,6 +141,7 @@ class CitUi extends Symbiote {
     },
 
     onFetch: async () => {
+      this.$.isLoading = true;
       this.$.message = `Fetching remote images...`;
       await WsClient.send({
         cmd: 'FETCH',
@@ -188,6 +209,7 @@ class CitUi extends Symbiote {
       let rData = getFilesAndFolders(cloudImagesData, CFG.imgSrcFolder, val); 
       this.$.filesRenderData = rData.files;
       this.$.foldersRenderData = rData.folders;
+      this.$.hasItems = Object.keys(rData.files).length > 0 || Object.keys(rData.folders).length > 0;
       this.$.selection = [];
       this.$.current = null;
       let totalFoldersContentSize = Object.keys(rData.folders).reduce((acc, folder) => {  
@@ -204,6 +226,7 @@ class CitUi extends Symbiote {
     });
 
     WsClient.onUpdate(async () => {
+      this.$.isLoading = false;
       this.$.message = `Processing of ${this.$.selection.length} items is done.`;
       this.$.folderHistory = [];
       this.$.filterSubstr = '';
@@ -211,6 +234,40 @@ class CitUi extends Symbiote {
 
     WsClient.onText((text) => {
       this.$.message = text;
+    });
+
+    WsClient.onStatus((status) => {
+      this.$.wsStatus = status;
+      if (status === 'connected') {
+        this.$.wsStatusIcon = 'wifi';
+        this.$.wsStatusColor = '#0f0';
+      } else if (status === 'disconnected') {
+        this.$.wsStatusIcon = 'wifi_off';
+        this.$.wsStatusColor = '#f00';
+      } else {
+        this.$.wsStatusIcon = 'sync';
+        this.$.wsStatusColor = 'var(--color-4)';
+      }
+    });
+
+    WsClient.connect().catch(() => {});
+
+    // Handle global keyboard shortcuts
+    window.addEventListener('keydown', (e) => {
+      // Don't intercept if user is typing in an input or contenteditable
+      let target = /** @type {HTMLElement} */ (e.target);
+      let tag = target.tagName ? target.tagName.toLowerCase() : '';
+      if (tag === 'input' || tag === 'textarea' || target.isContentEditable) {
+        return;
+      }
+
+      if (e.key === 'a' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        this.$.selectAll();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        this.$.deselectAll();
+      }
     });
   }
 

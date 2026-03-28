@@ -15,10 +15,22 @@ export const CIT_UI_TPL = html`
   <button round ${{onclick: 'onInvertBg'}}>${icon('contrast')}</button>
   <button round warning ${{'@disabled': '!current', onclick: 'clearCurrent'}}>${icon('variable_remove')}</button>
   <button round ${{onclick: 'reloadData'}}>${icon('refresh')}</button>
+  <div style="flex-grow: 1;"></div>
+  <button round disabled ${{'style.color': 'wsStatusColor', '@title': 'wsStatus'}}>
+    <span class="material-symbols-outlined">{{wsStatusIcon}}</span>
+  </button>
 </div>
 
 <div tiles-wrapper ref="tiles_wrapper">
-  <div tiles>
+  <div loader ${{'@hidden': '!isLoading'}}>
+    ${icon('cloud_sync')}
+  </div>
+  <div empty-state ${{'@hidden': 'hasItems'}}>
+    ${icon('photo_library')}
+    <div title>No images found</div>
+    <div sub>Upload images to the configured local folder to see them here</div>
+  </div>
+  <div tiles ${{'@hidden': '!hasItems'}}>
     <cit-back-btn></cit-back-btn>
     <div 
       itemize="foldersRenderData" 
@@ -61,12 +73,12 @@ export const CIT_UI_TPL = html`
     </div>
   </div>
 
-  <!--<div toolbar caption="Sorting">
+  <div toolbar caption="Sorting" ${{'@disabled': '!hasSelection'}}>
     <div controls>
-      <button>${icon('swap_vert')}Sort by substring</button>
-      <button>${icon('sort_by_alpha')}Sort by field</button>
+      <button ${{onclick: 'sortSelectionByNumber'}}>${icon('swap_vert')}Sort logically (numbers)</button>
+      <button ${{onclick: 'sortSelectionByAlpha'}}>${icon('sort_by_alpha')}Sort alphabetically</button>
     </div>
-  </div>-->
+  </div>
 
   <div toolbar caption="Remove & Download" ${{'@disabled': '!hasSelection'}}>
     <div controls>

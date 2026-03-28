@@ -9,8 +9,14 @@ export class PopMsg extends Symbiote {
 
   renderCallback() {
     this.sub('^message', (msg) => {
+      if (this.timeout) {
+        window.clearTimeout(this.timeout);
+      }
       if (msg) {
         this.setAttribute('active', '');
+        this.timeout = window.setTimeout(() => {
+          this.onClose();
+        }, 3000);
       } else {
         this.removeAttribute('active');
       }

@@ -132,6 +132,8 @@ let watchTimeout;
 export class FolderSync {
 
   static start() {
+    processSrcFolder(CFG.imgSrcFolder);
+    
     fs.watch(CFG.imgSrcFolder, {
       recursive: true,
     }, (eventType, fileName) => {
