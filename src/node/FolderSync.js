@@ -55,86 +55,79 @@ function findAllImages(initFolderPath) {
   return result;
 }
 
+/**
+ * @param {number} ms 
+ * @returns {Promise<void>}
+ */
+let waitFor = (ms) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};
+
 let retries = 3;
 async function processSrcFolder(folderPath) {
   let imgCloudData = getImgCloudData();
   let images = findAllImages(folderPath);
   let hasErrors = false;
-  
-  /**
-   * @param {number} ms 
-   * @returns {Promise<void>}
-   */
-  let waitFor = (ms) => {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
-  };
 
-  return new Promise((resolve) => {
-    images.forEach(async (imgPath, idx) => {
-      if (imgCloudData[imgPath]) {
-        // console.log('Image already exists: ', imgPath);
-        return;
-      }
-      console.log('Uploading image: ', imgPath);
-  
-      try {
-        let imgBytes = fs.readFileSync(imgPath);
-        let imgDimensions = imageSize(new Uint8Array(imgBytes));
-    
-        const formData = new FormData();
-        formData.append('file', new File([imgBytes], imgPath.split('/').pop()));
-        formData.append('metadata', JSON.stringify({
-          localPath: imgPath,
-        }));
-        let uploadUrl = fillTpl(CFG.uploadUrlTemplate, {
-          PROJECT: CFG.projectId,
-        });
-        const response = await (await fetch(uploadUrl, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${CFG.apiKey}`,
-          },
-          body: formData,
-        })).json();
-        
-        /** @type {CloudImageDescriptor} */
-        let imgDesc = {
-          cdnId: response.result.id,
-          uploadDate: response.result.uploaded,
-          imageName: imgPath.split('/').pop(),
-          alt: '',
-          width: imgDimensions.width.toString(),
-          height: imgDimensions.height.toString(),
-          aspectRatio: getAspectRatio(imgDimensions.width, imgDimensions.height),
-          srcFormat: imgPath.split('.').pop().toUpperCase(),
-        };
-        imgCloudData[imgPath] = imgDesc;
-        checkDir(CFG.syncDataPath);
-        fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
-      } catch (error) {
-        console.error('Error uploading image: ', imgPath);
-        hasErrors = true;
-      }
+  for (let imgPath of images) {
+    if (imgCloudData[imgPath]) {
+      continue;
+    }
+    console.log('Uploading image: ', imgPath);
 
-      if (idx === images.length - 1) {
-        if (hasErrors && retries > 0) {
-          retries--;
-          await waitFor(2000);
-          await processSrcFolder(folderPath);
-        } else {
-          retries = 3;
-          console.log(hasErrors ? 'Uploading finished with errors' : 'Uploading finished successfully');
-          resolve();
-        }
-      }
-    });
-  });
+    try {
+      let imgBytes = fs.readFileSync(imgPath);
+      let imgDimensions = imageSize(new Uint8Array(imgBytes));
+  
+      const formData = new FormData();
+      formData.append('file', new File([imgBytes], imgPath.split('/').pop()));
+      formData.append('metadata', JSON.stringify({
+        localPath: imgPath,
+      }));
+      let uploadUrl = fillTpl(CFG.uploadUrlTemplate, {
+        PROJECT: CFG.projectId,
+      });
+      const response = await (await fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${CFG.apiKey}`,
+        },
+        body: formData,
+      })).json();
+      
+      /** @type {CloudImageDescriptor} */
+      let imgDesc = {
+        cdnId: response.result.id,
+        uploadDate: response.result.uploaded,
+        imageName: imgPath.split('/').pop(),
+        alt: '',
+        width: imgDimensions.width.toString(),
+        height: imgDimensions.height.toString(),
+        aspectRatio: getAspectRatio(imgDimensions.width, imgDimensions.height),
+        srcFormat: imgPath.split('.').pop().toUpperCase(),
+      };
+      imgCloudData[imgPath] = imgDesc;
+      checkDir(CFG.syncDataPath);
+      fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
+    } catch (error) {
+      console.error(`Error uploading image "${imgPath}":`, error.message || error);
+      hasErrors = true;
+    }
+  }
+
+  if (hasErrors && retries > 0) {
+    retries--;
+    await waitFor(2000);
+    await processSrcFolder(folderPath);
+  } else {
+    retries = 3;
+    console.log(hasErrors ? 'Uploading finished with errors' : 'Uploading finished successfully');
+  }
 }
 
 let watchTimeout;
-let writeFileTimeout;
 
 export class FolderSync {
 
@@ -142,7 +135,6 @@ export class FolderSync {
     fs.watch(CFG.imgSrcFolder, {
       recursive: true,
     }, (eventType, fileName) => {
-      // console.log('File changed: ', fileName);
       clearTimeout(watchTimeout);
       watchTimeout = setTimeout(() => {
         processSrcFolder(CFG.imgSrcFolder);
@@ -155,19 +147,15 @@ export class FolderSync {
    * @returns {Promise<void>}
    */
   static writeSyncData(imgCloudData) {
-    let timeout = 400;
-    if (writeFileTimeout) {
-      clearTimeout(writeFileTimeout);
-    }
-    writeFileTimeout = setTimeout(() => {
-      checkDir(CFG.syncDataPath);
-      fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
-    }, timeout);
-    
-    return new Promise((resolve) => {
-      setTimeout(() => {
+    return new Promise((resolve, reject) => {
+      try {
+        checkDir(CFG.syncDataPath);
+        fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
         resolve();
-      }, timeout);
+      } catch (error) {
+        console.error('Error writing sync data:', error.message || error);
+        reject(error);
+      }
     });
   }
 
@@ -177,30 +165,30 @@ export class FolderSync {
   static async fetch(selection) {
     let imgCloudData = getImgCloudData();
     let promises = [];
-    selection.forEach(async (imgPath) => {
+    for (let imgPath of selection) {
       if (imgCloudData[imgPath] && !fs.existsSync(imgPath)) {
-        try {
-          let imgBytes = await (await fetch(fillTpl(CFG.fetchUrlTemplate, {
-            UID: imgCloudData[imgPath].cdnId,
-            PROJECT: CFG.projectId,
-          }), {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${CFG.apiKey}`,
-            },
-          })).arrayBuffer();
-          promises.push(new Promise((resolve) => {
+        let p = (async () => {
+          try {
+            let imgBytes = await (await fetch(fillTpl(CFG.fetchUrlTemplate, {
+              UID: imgCloudData[imgPath].cdnId,
+              PROJECT: CFG.projectId,
+            }), {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${CFG.apiKey}`,
+              },
+            })).arrayBuffer();
             checkDir(imgPath);
             fs.writeFileSync(imgPath, Buffer.from(imgBytes), {
               encoding: 'binary',
             });
-            resolve();
-          }));
-        } catch (error) {
-          console.error('Error fetching image: ', imgPath);
-        }
+          } catch (error) {
+            console.error(`Error fetching image "${imgPath}":`, error.message || error);
+          }
+        })();
+        promises.push(p);
       }
-    });
+    }
     await Promise.all(promises);
   }
 
@@ -210,9 +198,9 @@ export class FolderSync {
   static async remove(selection) {
     let imgCloudData = getImgCloudData();
     let promises = [];
-    selection.forEach((imgPath) => {
+    for (let imgPath of selection) {
       if (imgCloudData[imgPath]) {
-        promises.push(new Promise(async (resolve) => {
+        let p = (async () => {
           try {
             await fetch(fillTpl(CFG.removeUrlTemplate, {
               UID: imgCloudData[imgPath].cdnId,
@@ -229,19 +217,18 @@ export class FolderSync {
             }
             await this.writeSyncData(imgCloudData);
           } catch (error) {
-            console.error('Error deleting image: ', imgPath);
+            console.error(`Error deleting image "${imgPath}":`, error.message || error);
           }
-          resolve();
-        }));
+        })();
+        promises.push(p);
       }
-    });
+    }
     await Promise.all(promises);
   }
 
   /**
-   * 
    * @param {String} path 
-   * @param {String} srcUrl // Base64 encoded image url
+   * @param {String} srcUrl
    */
   static async saveImage(path, srcUrl) {
     checkDir(path);
@@ -254,6 +241,3 @@ export class FolderSync {
 }
 
 export default FolderSync;
-
-
-

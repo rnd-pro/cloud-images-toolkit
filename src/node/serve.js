@@ -1,4 +1,4 @@
-// @ts-ignore (namespace collision with "ws" package?)
+// @ts-ignore - ws package namespace collision with DOM WebSocket type
 import { WebSocketServer } from 'ws';
 import fs from 'fs';
 import http from 'http';
@@ -7,6 +7,10 @@ import indexHtml from '../dashboard/index.html.js';
 import esbuild from 'esbuild';
 import FolderSync, { checkDir } from './FolderSync.js';
 import { getPath } from './getPath.js';
+
+/** CFG safe for browser — strip sensitive fields */
+let browserCFG = { ...CFG };
+delete browserCFG.apiKey;
 
 const wss = new WebSocketServer({ port: CFG.wsPort });
 
@@ -87,9 +91,13 @@ wss.on('connection', (ws) => {
   };
 
   ws.on('message', (message) => {
-    /** @type {WsMsg} */
-    let wsm = JSON.parse(message);
-    cmdMap[wsm.cmd]?.(wsm.data);
+    try {
+      /** @type {WsMsg} */
+      let wsm = JSON.parse(message);
+      cmdMap[wsm.cmd]?.(wsm.data);
+    } catch (err) {
+      console.error('🔴 Invalid WS message:', err.message);
+    }
   });
 
 });
@@ -102,23 +110,35 @@ if (!fs.existsSync(CFG.syncDataPath)) {
 }
 
 const httpServer = http.createServer((req, res) => {
+  if (!req.url) {
+    res.statusCode = 400;
+    res.end('Bad request');
+    return;
+  }
+
   if (req.method === 'GET' && req.url.endsWith('CFG.js')) {
     res.setHeader('Content-Type', 'text/javascript');
-    res.end(`export const CFG = ${JSON.stringify(CFG)};export default CFG;`);
+    res.end(`export const CFG = ${JSON.stringify(browserCFG)};export default CFG;`);
   } else if (req.method === 'GET' && req.url === '/') {
-    let entryUrl = getPath('./src/dashboard/cit-ui.js');
-    console.log('entryUrl', entryUrl);
-    let js = esbuild.buildSync({
-      entryPoints: [entryUrl],
-      bundle: true,
-      format: 'esm',
-      minify: false,
-      sourcemap: false,
-      external: ['@symbiotejs/symbiote', 'crypto', '../node/CFG.js', 'immersive-media-spots/wgt/viewer'],
-      write: false,
-    }).outputFiles[0].text;
-    res.setHeader('Content-Type', 'text/html');
-    res.end(indexHtml.replace('{{SCRIPT}}', `<script type="module">${js}</script>`));
+    try {
+      let entryUrl = getPath('./src/dashboard/cit-ui.js');
+      let js = esbuild.buildSync({
+        entryPoints: [entryUrl],
+        bundle: true,
+        format: 'esm',
+        minify: false,
+        sourcemap: false,
+        external: ['@symbiotejs/symbiote', 'crypto', '../node/CFG.js', 'immersive-media-spots/wgt/viewer'],
+        write: false,
+      }).outputFiles[0].text;
+      res.setHeader('Content-Type', 'text/html');
+      res.end(indexHtml.replace('{{SCRIPT}}', `<script type="module">${js}</script>`));
+    } catch (err) {
+      console.error('🔴 Build error:', err.message);
+      res.statusCode = 500;
+      res.setHeader('Content-Type', 'text/html');
+      res.end(`<!DOCTYPE html><html><body style="background:#111;color:#f66;font-family:monospace;padding:40px"><h1>⚠️ Build Error</h1><pre>${err.message}</pre></body></html>`);
+    }
   } else if (req.method === 'GET' && req.url.endsWith('.json')) {
     res.setHeader('Content-Type', 'application/json');
     res.end(fs.readFileSync(CFG.syncDataPath, 'utf8'));
@@ -135,3 +155,13 @@ httpServer.listen(CFG.httpPort, () => {
 });
 
 FolderSync.start();
+
+function shutdown() {
+  console.log('\n🟡 Shutting down CIT...');
+  wss.close();
+  httpServer.close();
+  process.exit(0);
+}
+
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);

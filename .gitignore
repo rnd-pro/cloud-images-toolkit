@@ -22,6 +22,5 @@ cit-store/
 
 ## api key
 CIT_API_KEY
-
-/cit-config.json
+cit-config.json
 
