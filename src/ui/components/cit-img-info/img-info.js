@@ -5,6 +5,14 @@ class ImgInfo extends Symbiote {
   init$ = {
     alt: '',
     preview: '',
+    current: null,
+  }
+
+  initCallback() {
+    this.sub('current', (val) => {
+      if (!val) return;
+      this.set$(val.localCtx.store, true);
+    });
   }
 
   renderCallback() {

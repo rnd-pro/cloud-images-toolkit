@@ -5,3 +5,6 @@ export {} from './cit-folder-item/folder-item.js';
 export {} from './cit-img-info/img-info.js';
 export {} from './cit-ims-item/ims-item.js';
 export {} from './cit-ui-ctx/cit-ui-ctx.js';
+export {} from './cit-images-toolbar/cit-images-toolbar.js';
+export {} from './cit-ims-toolbar/cit-ims-toolbar.js';
+

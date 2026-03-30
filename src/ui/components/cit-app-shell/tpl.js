@@ -1,5 +1,4 @@
 import { html } from '@symbiotejs/symbiote';
-import { CFG } from '../../../node/CFG.js';
 import { icon } from '../../icon.js';
 export { BackBtn } from '../cit-back-btn/back-btn.js';
 
@@ -58,106 +57,13 @@ export const CIT_UI_TPL = html`
   </div>
 </div>
 
-<div panel column ${{'@hidden': 'isImsExplorer'}}>
-
-  <div toolbar caption="Filtering & Selection">
-    <div controls grow>
-      <info-row caption="Filtered: ">{{filteredSize}}</info-row>
-      <info-row caption="Selected: ">{{selectionSize}}</info-row>
-    </div>
-    <input 
-      type="text"
-      placeholder="Filter by path pattern"
-      ${{oninput: 'onFilter', value: 'filterSubstr'}}>
-    <input 
-      type="text"
-      placeholder="Filter by tag"
-      ${{oninput: 'onTagFilter', value: 'tagFilterSubstr'}}>
-    <div controls>
-      <button
-        ${{onclick: 'selectAll'}}>
-        ${icon('library_add_check')}
-        Select all
-      </button>
-      <button
-        ${{onclick: 'deselectAll', disabled: '!hasSelection'}}>
-        ${icon('remove_selection')}
-        Deselect all
-      </button>
-      <button
-        ${{onclick: 'copySelectionJson', disabled: '!hasSelection'}}>
-        ${icon('copy_all')}
-        Copy selection JSON
-      </button>
-    </div>
-  </div>
-
-  <div toolbar caption="Sorting" ${{'@disabled': '!hasSelection'}}>
-    <div controls>
-      <button ${{onclick: 'sortSelectionByNumber'}}>${icon('swap_vert')}Sort logically (numbers)</button>
-      <button ${{onclick: 'sortSelectionByAlpha'}}>${icon('sort_by_alpha')}Sort alphabetically</button>
-    </div>
-  </div>
-
-  <div toolbar caption="Remove & Download" ${{'@disabled': '!hasSelection'}}>
-    <div controls>
-      <button ${{onclick: 'onRemove'}}>${icon('delete_sweep')}Delete selected</button>
-      <button ${{onclick: 'onFetch'}}>${icon('download')}Download remotes</button>
-    </div>
-  </div>
-
-  <div toolbar caption="Current Image Info" ${{'@disabled': '!current'}}>
-    <cit-img-info ref="imgInfo"></cit-img-info>
-  </div>
-
-  <div toolbar caption="Images Meta Data" ${{'@disabled': '!hasSelection'}}>
-    <input 
-      ${{oninput: 'onAltInput'}}
-      type="text" 
-      placeholder="Description (alt)">
-    <input 
-      ${{oninput: 'onTagsInput'}}
-      type="text" 
-      placeholder="Tags (comma-separated)">
-    <div controls>
-      <button ${{onclick: 'onMetaSave'}}>${icon('save')}Apply for selection</button>
-    </div>
-  </div>
-
-  <div toolbar caption="CDN Variants" ${{'@disabled': '!current'}}>
-    <div controls ${{onclick: 'onVariantClick'}}>
-      ${CFG.variants.map((v) => {
-        return html`<button variant="${v}">${v}</button>`;
-      }).join('')}
-    </div>
-  </div>
-
-  <div toolbar caption="Embed Code" ${{'@disabled': '!current'}}>
-    <pre><code contenteditable="true">{{embedCode}}</code></pre>
-    <button ${{onclick: 'onEmbedCopy'}}>${icon('content_copy')}Copy image embed code</button>
-  </div>
-
-  <div toolbar caption="IMS Widgets" ${{'@disabled': '!hasSelection'}}>
-    <div controls column ${{onclick: 'onImsTypeSelected'}}>
-      <button type="gallery">${icon('gallery_thumbnail')}Gallery</button>
-      <button type="diff">${icon('photo_library')}Difference</button>
-      <button type="pano">${icon('panorama_photosphere')}Spherical panorama</button>
-      <button type="spinner">${icon('motion_play')}Spinner animation</button>
-    </div>
-  </div>
-
-
-  <div toolbar caption="IMS Widgets Explorer Controls" ${{'@hidden': '!isImsExplorer'}}>
-    <div controls column>
-      <button ${{onclick: 'onImsEdit', disabled: '!hasSelection'}}>${icon('edit')}Edit Selected Widget</button>
-      <button warning ${{onclick: 'onImsDelete', disabled: '!hasSelection'}}>${icon('delete')}Delete Selected</button>
-    </div>
-  </div>
-
+<div panel column>
+  <cit-ui-ctx>
+    <cit-images-toolbar ${{'$.current': 'current', '$.hasSelection': 'hasSelection'}}></cit-images-toolbar>
+    <cit-ims-toolbar ${{'$.current': 'current', '$.hasSelection': 'hasSelection'}}></cit-ims-toolbar>
+  </cit-ui-ctx>
   <div footer>&copy; ${new Date().getFullYear()} <a href="https://rnd-pro.com">rnd-pro.com</a></div>
-
   <cit-pop-msg></cit-pop-msg>
-  
 </div>
 <cit-ims-composer></cit-ims-composer>
 `;

@@ -152,6 +152,7 @@ class CitUi extends Symbiote {
       if (this.$.isImsExplorer) {
         await this.#loadImsData();
       }
+      this.$['APP/uiCtx'] = this.$.isImsExplorer ? 'ims' : 'images';
     },
 
     onImsDelete: async () => {
@@ -268,8 +269,6 @@ class CitUi extends Symbiote {
         return;
       }
       if (val.$.cdnId && !val.$.imsType) {
-        this.ref.imgInfo.set$(val.localCtx.store, true);
-        this.ref.imgInfo.removeAttribute('hidden');
         this.$.embedCode = getImgCode(val.$.cdnId, CFG.variants, val.$.alt);
       }
     });
