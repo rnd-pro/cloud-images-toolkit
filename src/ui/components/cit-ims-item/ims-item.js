@@ -39,7 +39,7 @@ export default class ImsItem extends Symbiote {
       }
     });
 
-    this.sub('imsType', (val) => {
+    this.sub('imsData', (val) => {
       let icn = 'widgets';
       let iconMap = {
         gallery: 'gallery_thumbnail',
@@ -47,8 +47,19 @@ export default class ImsItem extends Symbiote {
         pano: 'panorama_photosphere',
         spinner: 'motion_play',
       }
-      icn = iconMap[val] || 'widgets';
+      icn = iconMap[val.imsType] || 'widgets';
       this.$.typeIcon = icon(icn);
+      function getPreUrl(data) {
+        let url = '';
+        if (data.urlTemplate && data.cdnIdList && data.cdnIdList.length) {
+          url = data.urlTemplate.replace('{UID}', data.cdnIdList[data.startFrame || 0]);
+          if (data.variants && data.urlTemplate.includes('{VARIANT}')) {
+            url = url.replace('{VARIANT}', data.variants[0]);
+          }
+        }
+        return url;
+      }
+      this.$.previewUrl = val.coverUrl || getPreUrl(val);
     });
   }
 }
@@ -92,14 +103,23 @@ ImsItem.rootStyles = css`
       display: flex;
       align-items: center;
       justify-content: center;
-      color: rgba(255, 255, 255, 0.5);
+      color: #fff;
+      text-shadow: 0 0 8px #000;
       position: relative;
-    }
 
-    .preview-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
+      [icon] {
+        position: absolute;
+
+        .material-symbols-outlined {
+          font-size: 48px !important;
+        }
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
     }
 
     [name] {
@@ -114,8 +134,8 @@ ImsItem.rootStyles = css`
 
 ImsItem.template = html`
   <div class="preview-container">
-    <div ${{innerHTML: 'typeIcon'}}></div>
     <img loading="lazy" decoding="async" ${{'@hidden': '!previewUrl', src: 'previewUrl'}}>
+    <div icon ${{innerHTML: 'typeIcon'}}></div>
   </div>
   <div name>{{_KEY_}}</div>
 `;
