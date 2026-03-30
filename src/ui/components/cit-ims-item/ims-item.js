@@ -10,6 +10,7 @@ export default class ImsItem extends Symbiote {
   }
 
   renderCallback() {
+    
     this.onclick = () => {
       let selectionSet = new Set(this.$['^selection']);
       if (selectionSet.has(this.$._KEY_)) {
@@ -19,6 +20,11 @@ export default class ImsItem extends Symbiote {
       }
       this.$['^selection'] = Array.from(selectionSet);
       this.$['^current'] = this;
+    }
+
+    this.ondblclick = () => {
+      this.$['^current'] = this;
+      this.$['^onImsEdit']();
     }
 
     this.sub('^selection', (val) => {
