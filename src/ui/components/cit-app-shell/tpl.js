@@ -65,5 +65,6 @@ export const CIT_UI_TPL = html`
   <div footer>&copy; ${new Date().getFullYear()} <a href="https://rnd-pro.com">rnd-pro.com</a></div>
   <cit-pop-msg></cit-pop-msg>
 </div>
+
 <cit-ims-composer></cit-ims-composer>
 `;

@@ -33,7 +33,7 @@ class CitUi extends Symbiote {
   init$ = {
     filesRenderData: {},
     foldersRenderData: {},
-    imsRenderData: [],
+    imsRenderData: {},
     isLoading: false,
     hasItems: true,
     hasImsItems: false,
@@ -169,12 +169,10 @@ class CitUi extends Symbiote {
     },
 
     onImsEdit: () => {
-      if (this.$.selection.length === 1) {
-        let hash = this.$.selection[0];
-        let data = this.$.imsRenderData.find(item => item.hash === hash);
-        if (data) {
-          /** @type {any} */ (document.querySelector('cit-ims-composer')).open(data.imsType, data);
-        }
+      if (this.$.current) {
+        /** @type {import('../cit-ims-composer/ims-composer.js').ImsComposer} */ 
+        let composer = document.querySelector('cit-ims-composer');
+        composer.open(this.$.current.$.imsType, this.$.current.localCtx.store);
       }
     },
 
@@ -352,7 +350,7 @@ class CitUi extends Symbiote {
   async #loadImsData() {
     this.$.isLoading = true;
     let data = await getImsData();
-    let renderData = [];
+    let renderData = {};
     for (let hash in data) {
       let previewUrl = '';
       if (data[hash].imsType === 'diff') {
@@ -365,15 +363,14 @@ class CitUi extends Symbiote {
         previewUrl = data[hash].images?.[0]?.src || '';
       }
       
-      renderData.push({
-        hash,
+      renderData[hash] = {
         imsType: data[hash].imsType || 'unknown',
         previewUrl,
         ...data[hash]
-      });
+      };
     }
     this.$.imsRenderData = renderData;
-    this.$.hasImsItems = renderData.length > 0;
+    this.$.hasImsItems = Object.keys(renderData).length > 0;
     this.$.isLoading = false;
   }
 

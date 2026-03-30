@@ -6,23 +6,23 @@ export default class ImsItem extends Symbiote {
   init$ = {
     imsType: '',
     previewUrl: '',
-    hash: '',
+    typeIcon: '',
   }
 
   renderCallback() {
     this.onclick = () => {
       let selectionSet = new Set(this.$['^selection']);
-      if (selectionSet.has(this.$.hash)) {
-        selectionSet.delete(this.$.hash);
+      if (selectionSet.has(this.$._KEY_)) {
+        selectionSet.delete(this.$._KEY_);
       } else {
-        selectionSet.add(this.$.hash);
+        selectionSet.add(this.$._KEY_);
       }
       this.$['^selection'] = Array.from(selectionSet);
       this.$['^current'] = this;
     }
 
     this.sub('^selection', (val) => {
-      this.classList.toggle('selected', val.includes(this.$.hash));
+      this.classList.toggle('selected', val.includes(this.$._KEY_));
     });
 
     this.sub('^current', (val) => {
@@ -35,11 +35,14 @@ export default class ImsItem extends Symbiote {
 
     this.sub('imsType', (val) => {
       let icn = 'widgets';
-      if (val === 'gallery') icn = 'gallery_thumbnail';
-      if (val === 'diff') icn = 'photo_library';
-      if (val === 'pano') icn = 'panorama_photosphere';
-      if (val === 'spinner') icn = 'motion_play';
-      this.$.iconType = icon(icn);
+      let iconMap = {
+        gallery: 'gallery_thumbnail',
+        diff: 'photo_library',
+        pano: 'panorama_photosphere',
+        spinner: 'motion_play',
+      }
+      icn = iconMap[val] || 'widgets';
+      this.$.typeIcon = icon(icn);
     });
   }
 }
@@ -48,7 +51,7 @@ ImsItem.rootStyles = css`
   cit-ims-item {
     display: inline-block;
     box-sizing: border-box;
-    background-color: rgba(0, 50, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.4);
     color: var(--color-2);
     border-radius: 6px;
     padding: 10px;
@@ -105,10 +108,10 @@ ImsItem.rootStyles = css`
 
 ImsItem.template = html`
   <div class="preview-container">
-    <div ${{'@hidden': 'previewUrl'}}>{{iconType}}</div>
+    <div ${{innerHTML: 'typeIcon'}}></div>
     <img loading="lazy" decoding="async" ${{'@hidden': '!previewUrl', src: 'previewUrl'}}>
   </div>
-  <div name>{{hash}}</div>
+  <div name>{{_KEY_}}</div>
 `;
 
 ImsItem.reg('cit-ims-item');
