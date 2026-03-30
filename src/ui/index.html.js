@@ -15,6 +15,7 @@ export default /*html*/ `<!DOCTYPE html>
       background-color: #000;
     }
   </style>
+  <link href="https://rnd-pro.com/svg/cit/index.svg" rel="icon">
   <script type="importmap">
     {
       "imports": {
