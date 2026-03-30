@@ -23,7 +23,7 @@ describe('serve', () => {
 
     let config = {
       syncDataPath: path.join(TMP_DIR, 'sync-data.json'),
-      imsDataPath: path.join(TMP_DIR, 'ims-data.json'),
+      imsFolder: path.join(TMP_DIR, 'ims-widgets'),
       imgSrcFolder: path.join(TMP_DIR, 'store/'),
       apiKeyPath: path.join(TMP_DIR, 'API_KEY'),
       projectId: 'test-project',

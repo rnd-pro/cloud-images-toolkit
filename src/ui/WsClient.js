@@ -14,6 +14,8 @@ export class WsClient {
         let wsm = JSON.parse(data);
         if (wsm.cmd === 'UPDATE') {
           this.updateCallbacks?.forEach(cb => cb());
+        } else if (wsm.cmd === 'UPDATE_IMS') {
+          this.updateImsCallbacks?.forEach(cb => cb());
         } else if (wsm.cmd === 'TEXT') {
           this.textCallbacks?.forEach(cb => cb(wsm.data));
         }
@@ -74,6 +76,13 @@ export class WsClient {
       this.updateCallbacks = [];
     }
     this.updateCallbacks.push(cb);
+  }
+
+  static onUpdateIms(cb) {
+    if (!this.updateImsCallbacks) {
+      this.updateImsCallbacks = [];
+    }
+    this.updateImsCallbacks.push(cb);
   }
 
   static onText(cb) {

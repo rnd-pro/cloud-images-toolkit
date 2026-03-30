@@ -1,7 +1,7 @@
 import { html } from '@symbiotejs/symbiote';
-import { icon } from './icon.js';
-import { CFG } from '../node/CFG.js';
-export { BackBtn } from './back-btn.js';
+import { CFG } from '../../../node/CFG.js';
+import { icon } from '../../icon.js';
+export { BackBtn } from '../cit-back-btn/back-btn.js';
 
 export const CIT_UI_TPL = html`
 <link 
@@ -12,6 +12,7 @@ export const CIT_UI_TPL = html`
   <button round ${{onclick: 'scrollTop'}}>${icon('arrow_upward')}</button>
   <button round current ${{'@disabled': '!current', onclick: 'scrollToCurrent'}}>${icon('flag')}</button>
   <button round ${{onclick: 'scrollBottom'}}>${icon('arrow_downward')}</button>
+  <button round ${{onclick: 'toggleImsExplorer'}} ${{'@current': 'isImsExplorer'}} title="Toggle IMS Widgets">${icon('widgets')}</button>
   <button round ${{onclick: 'onInvertBg'}}>${icon('contrast')}</button>
   <button round warning ${{'@disabled': '!current', onclick: 'clearCurrent'}}>${icon('variable_remove')}</button>
   <button round ${{onclick: 'reloadData'}}>${icon('refresh')}</button>
@@ -21,7 +22,7 @@ export const CIT_UI_TPL = html`
   </button>
 </div>
 
-<div tiles-wrapper ref="tiles_wrapper">
+<div tiles-wrapper ref="tiles_wrapper" ${{'@hidden': 'isImsExplorer'}}>
   <div loader ${{'@hidden': '!isLoading'}}>
     ${icon('cloud_sync')}
   </div>
@@ -43,7 +44,21 @@ export const CIT_UI_TPL = html`
   </div>
 </div>
 
-<div panel column>
+<div tiles-wrapper ref="ims_wrapper" ${{'@hidden': '!isImsExplorer'}}>
+  <div empty-state ${{'@hidden': 'hasImsItems'}}>
+    ${icon('widgets')}
+    <div title>No IMS widgets found</div>
+    <div sub>Save widgets from the composer to see them here</div>
+  </div>
+  <div tiles ${{'@hidden': '!hasImsItems'}}>
+    <div 
+      itemize="imsRenderData" 
+      item-tag="cit-ims-item" 
+      itemize-container></div>
+  </div>
+</div>
+
+<div panel column ${{'@hidden': 'isImsExplorer'}}>
 
   <div toolbar caption="Filtering & Selection">
     <div controls grow>
@@ -54,6 +69,10 @@ export const CIT_UI_TPL = html`
       type="text"
       placeholder="Filter by path pattern"
       ${{oninput: 'onFilter', value: 'filterSubstr'}}>
+    <input 
+      type="text"
+      placeholder="Filter by tag"
+      ${{oninput: 'onTagFilter', value: 'tagFilterSubstr'}}>
     <div controls>
       <button
         ${{onclick: 'selectAll'}}>
@@ -91,14 +110,17 @@ export const CIT_UI_TPL = html`
     <cit-img-info ref="imgInfo"></cit-img-info>
   </div>
 
-  <div toolbar caption="Images Description" ${{'@disabled': '!hasSelection'}}>
+  <div toolbar caption="Images Meta Data" ${{'@disabled': '!hasSelection'}}>
     <input 
       ${{oninput: 'onAltInput'}}
       type="text" 
       placeholder="Description (alt)">
+    <input 
+      ${{oninput: 'onTagsInput'}}
+      type="text" 
+      placeholder="Tags (comma-separated)">
     <div controls>
-      <!--<button>${icon('auto_awesome')}Generate with AI</button>-->
-      <button ${{onclick: 'onAltSave'}}>${icon('save')}Apply for selection</button>
+      <button ${{onclick: 'onMetaSave'}}>${icon('save')}Apply for selection</button>
     </div>
   </div>
 
@@ -124,9 +146,13 @@ export const CIT_UI_TPL = html`
     </div>
   </div>
 
-  <!--<div toolbar caption="Extract data" ${{'@disabled': '!hasSelection'}}>
-    <button>${icon('data_object')}Extract JSON data</button>
-  </div>-->
+
+  <div toolbar caption="IMS Widgets Explorer Controls" ${{'@hidden': '!isImsExplorer'}}>
+    <div controls column>
+      <button ${{onclick: 'onImsEdit', disabled: '!hasSelection'}}>${icon('edit')}Edit Selected Widget</button>
+      <button warning ${{onclick: 'onImsDelete', disabled: '!hasSelection'}}>${icon('delete')}Delete Selected</button>
+    </div>
+  </div>
 
   <div footer>&copy; ${new Date().getFullYear()} <a href="https://rnd-pro.com">rnd-pro.com</a></div>
 
@@ -134,56 +160,4 @@ export const CIT_UI_TPL = html`
   
 </div>
 <cit-ims-composer></cit-ims-composer>
-`;
-
-export const IMS_COMPOSER_TPL = html`
-<div popup>
-  <div p-header>
-    <div p-caption>${icon('tune')} &nbsp;IMS Composer</div>
-    <button round ${{onclick: 'close'}}>${icon('close')}</button>
-  </div>
-  <div p-content>
-    <div layout>
-      <div column>
-        <ims-viewer ${{'@src-data': 'imsDataUrl'}}></ims-viewer>
-        <div toolbar caption="Source data object">
-          <div controls>
-            <button ${{onclick: 'onSrcDataCopy'}}>${icon('data_object')}Copy source data JSON</button>
-            <button ${{onclick: 'onSaveDataLocally', disabled: '!ableToSave'}}>${icon('save')}Save data locally</button>
-          </div>
-        </div>
-
-        <div toolbar caption="Source data to image encoding">
-          <input 
-            type="text" 
-            placeholder="Local file path..."
-            ${{value: 'srcDataImageLocalPath', oninput: 'onSrcDataImageLocalPathInput'}}>
-          <div controls>
-            <img src-data-img ${{src: 'dataImageSrc'}}>
-            <button ${{onclick: 'onDataImagePublish', disabled: '!ableToSave'}}>${icon('upload_file')}Publish data as image</button>
-            <!--<button ${{onclick: 'onSrcDataCopy'}}>${icon('save')}Save data image</button>-->
-          </div>
-        </div>
-
-        <div toolbar caption="HTML Embed code">
-          <code embed-code contenteditable="true">{{htmlCode}}</code>
-          <div controls>
-            <button ${{onclick: 'onEmbedCodeCopy'}}>${icon('content_copy')}Copy embed code</button>
-          </div>
-        </div>
-      </div>
-      <div column>
-        <pre><code 
-            contenteditable="true" 
-            spellcheck="false"
-            ref="jsonEditor" 
-            ${{
-              oninput: 'onJsonEdit',
-              '@error': 'jsonError',
-              textContent: 'srcData',
-            }}></code></pre>
-      </div>
-    <div>
-  </div>
-</div>
 `;

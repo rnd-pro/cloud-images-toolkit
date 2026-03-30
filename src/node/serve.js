@@ -3,9 +3,10 @@ import { WebSocketServer } from 'ws';
 import fs from 'fs';
 import http from 'http';
 import CFG from './CFG.js';
-import indexHtml from '../dashboard/index.html.js';
+import indexHtml from '../ui/index.html.js';
 import esbuild from 'esbuild';
 import FolderSync, { checkDir } from './FolderSync.js';
+import ImsSync from './ImsSync.js';
 import { getPath } from './getPath.js';
 
 /** CFG safe for browser — strip sensitive fields */
@@ -58,24 +59,18 @@ wss.on('connection', (ws) => {
       }));
     },
     SAVE_IMS: async (/** @type {WsMsgData} */ msgData) => {
-      if (!fs.existsSync(CFG.imsDataPath)) {
-        checkDir(CFG.imsDataPath);
-        fs.writeFileSync(CFG.imsDataPath, '{}');
-      }
-      let imsData = JSON.parse(fs.readFileSync(CFG.imsDataPath).toString());
-      if (imsData[msgData.hash]) {
-        ws.send(JSON.stringify({
-          cmd: 'TEXT',
-          data: 'IMS data for this configuration is already exists.',
-        }));
-      } else {
-        imsData[msgData.hash] = msgData.srcData;
-        fs.writeFileSync(CFG.imsDataPath, JSON.stringify(imsData, undefined, 2));
-        ws.send(JSON.stringify({
-          cmd: 'TEXT',
-          data: 'IMS data is saved to local project file.',
-        }));
-      }
+      ImsSync.save(msgData.hash, msgData.srcData);
+      ws.send(JSON.stringify({
+        cmd: 'TEXT',
+        data: `IMS descriptor saved to ${msgData.hash}.json`,
+      }));
+    },
+    DELETE_IMS: async (hash) => {
+      ImsSync.delete(hash);
+      ws.send(JSON.stringify({
+        cmd: 'TEXT',
+        data: 'IMS descriptor deleted.',
+      }));
     },
     PUB_DATA_IMG: async (/** @type {WsMsgData} */ msgData) => {
       await FolderSync.saveImage(msgData.localPath, msgData.imgData);
@@ -121,14 +116,14 @@ const httpServer = http.createServer((req, res) => {
     res.end(`export const CFG = ${JSON.stringify(browserCFG)};export default CFG;`);
   } else if (req.method === 'GET' && req.url === '/') {
     try {
-      let entryUrl = getPath('./src/dashboard/cit-ui.js');
+      let entryUrl = getPath('./src/ui/components/cit-app-shell/cit-ui.js');
       let js = esbuild.buildSync({
         entryPoints: [entryUrl],
         bundle: true,
         format: 'esm',
         minify: false,
         sourcemap: false,
-        external: ['@symbiotejs/symbiote', 'crypto', '../node/CFG.js', 'immersive-media-spots/wgt/viewer'],
+        external: ['@symbiotejs/symbiote', 'immersive-media-spots/wgt/viewer', '*/node/CFG.js', 'crypto'],
         write: false,
       }).outputFiles[0].text;
       res.setHeader('Content-Type', 'text/html');
@@ -139,6 +134,9 @@ const httpServer = http.createServer((req, res) => {
       res.setHeader('Content-Type', 'text/html');
       res.end(`<!DOCTYPE html><html><body style="background:#111;color:#f66;font-family:monospace;padding:40px"><h1>⚠️ Build Error</h1><pre>${err.message}</pre></body></html>`);
     }
+  } else if (req.method === 'GET' && req.url.endsWith('ims-data.json')) {
+    res.setHeader('Content-Type', 'application/json');
+    res.end(JSON.stringify(ImsSync.getList()));
   } else if (req.method === 'GET' && req.url.endsWith('.json')) {
     res.setHeader('Content-Type', 'application/json');
     res.end(fs.readFileSync(CFG.syncDataPath, 'utf8'));
@@ -155,7 +153,16 @@ httpServer.listen(CFG.httpPort, () => {
 });
 
 FolderSync.start();
-
+ImsSync.start(() => {
+  wss.clients.forEach((client) => {
+    if (client.readyState === 1) { // 1 is WebSocket.OPEN
+      client.send(JSON.stringify({
+        cmd: 'UPDATE_IMS',
+        data: null,
+      }));
+    }
+  });
+});
 function shutdown() {
   console.log('\n🟡 Shutting down CIT...');
   wss.close();

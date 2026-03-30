@@ -1,6 +1,6 @@
 {
   "syncDataPath": "./cit-sync-data.json",
-  "imsDataPath": "./ims-data.json",
+  "imsFolder": "./ims-widgets/",
   "imgSrcFolder": "./cit-store/",
   "apiKeyPath": "./CIT_API_KEY",
   "projectId": "<YOUR_PROJECT_ID>",

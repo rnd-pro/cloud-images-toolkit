@@ -71,7 +71,7 @@ describe('CFG', () => {
     process.chdir(TMP_DIR);
     let config = {
       syncDataPath: './data.json',
-      imsDataPath: './ims.json',
+      imsFolder: './ims/',
       imgSrcFolder: './store/',
       apiKeyPath: './API_KEY',
       projectId: 'test-project',

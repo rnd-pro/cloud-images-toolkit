@@ -25,7 +25,7 @@ export default defineConfig({
       fs.mkdirSync(tmp + '/store', { recursive: true });
       let config = {
         syncDataPath: path.resolve(tmp, 'sync-data.json'),
-        imsDataPath: path.resolve(tmp, 'ims-data.json'),
+        imsFolder: path.resolve(tmp, 'ims-widgets/'),
         imgSrcFolder: path.resolve(tmp, 'store/'),
         apiKeyPath: path.resolve(tmp, 'API_KEY'),
         projectId: 'test-project',

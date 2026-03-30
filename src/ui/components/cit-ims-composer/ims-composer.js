@@ -1,18 +1,18 @@
 import Symbiote from '@symbiotejs/symbiote';
-import { IMS_COMPOSER_CSS } from './styles.js';
-import { IMS_COMPOSER_TPL } from './templates.js';
-import { CFG } from '../node/CFG.js';
+import { IMS_COMPOSER_CSS } from './css.js';
+import { IMS_COMPOSER_TPL } from './tpl.js';
+import { CFG } from '../../../node/CFG.js';
 export { ImsViewer } from 'immersive-media-spots/wgt/viewer';
 import { ImsDiffData } from 'immersive-media-spots/wgt/diff/ImsDiffData.js';
 import { ImsGalleryData } from 'immersive-media-spots/wgt/gallery/ImsGalleryData.js';
 import { ImsPanoData } from 'immersive-media-spots/wgt/pano/ImsPanoData.js';
 import { ImsSpinnerData } from 'immersive-media-spots/wgt/spinner/ImsSpinnerData.js';
 import { dataToImage } from 'immersive-media-spots/lib/dataToImage.js';
-import { sortBySubNumber } from '../iso/sortBySubNumber.js';
+import { sortBySubNumber } from '../../../iso/sortBySubNumber.js';
 // import imageToData from 'immersive-media-spots/lib/imageToData.js';
 import { getHash } from 'jsda-kit/iso/getHash.js';
-import { WsClient } from './WsClient.js';
-import { getCloudImagesData } from './getCloudImagesData.js';
+import { WsClient } from '../../WsClient.js';
+import { getCloudImagesData } from '../../getCloudImagesData.js';
 
 export class ImsComposer extends Symbiote {
 
@@ -20,6 +20,13 @@ export class ImsComposer extends Symbiote {
 
   get srcData() {
     return JSON.parse(this.ref.jsonEditor.textContent);
+  }
+
+  open(imsType, srcData) {
+    this.$['^imsActive'] = true;
+    this.$['^currentImsType'] = null;
+    this.$.srcData = JSON.stringify(srcData, undefined, 2);
+    this.#applyData(srcData);
   }
 
   init$ = {

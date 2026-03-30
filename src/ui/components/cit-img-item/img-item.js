@@ -1,7 +1,7 @@
 import Symbiote, { html, css } from '@symbiotejs/symbiote';
-import { CFG } from '../node/CFG.js';
-import { fillTpl } from '../iso/fillTpl.js';
-import { getVariantsNum } from '../iso/getVariantsNum.js';
+import { CFG } from '../../../node/CFG.js';
+import { fillTpl } from '../../../iso/fillTpl.js';
+import { getVariantsNum } from '../../../iso/getVariantsNum.js';
 
 export default class ImgItem extends Symbiote {
 

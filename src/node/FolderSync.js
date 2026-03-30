@@ -103,6 +103,7 @@ async function processSrcFolder(folderPath) {
         uploadDate: response.result.uploaded,
         imageName: imgPath.split('/').pop(),
         alt: '',
+        tags: [],
         width: imgDimensions.width.toString(),
         height: imgDimensions.height.toString(),
         aspectRatio: getAspectRatio(imgDimensions.width, imgDimensions.height),

@@ -1,18 +1,20 @@
 import Symbiote from '@symbiotejs/symbiote';
-import { CIT_UI_CSS } from './styles.js';
-import { CIT_UI_TPL } from './templates.js';
-import { getImgCode } from '../iso/getImgCode.js';
-import { CFG } from '../node/CFG.js';
-import { fillTpl } from '../iso/fillTpl.js';
-import { WsClient } from './WsClient.js';
-import {} from './pop-msg.js';
-import {} from './ims-composer.js';
-import { sortBySubNumber } from '../iso/sortBySubNumber.js';
-import { getFilesAndFolders } from './getFilesAndFolders.js';
-import { getCloudImagesData } from './getCloudImagesData.js';
-export {} from './img-item.js';
-export {} from './folder-item.js';
-export {} from './img-info.js';
+import { CIT_UI_CSS } from './css.js';
+import { CIT_UI_TPL } from './tpl.js';
+import { getImgCode } from '../../../iso/getImgCode.js';
+import { CFG } from '../../../node/CFG.js';
+import { fillTpl } from '../../../iso/fillTpl.js';
+import { WsClient } from '../../WsClient.js';
+import {} from '../cit-pop-msg/pop-msg.js';
+import {} from '../cit-ims-composer/ims-composer.js';
+import { sortBySubNumber } from '../../../iso/sortBySubNumber.js';
+import { getFilesAndFolders } from '../../getFilesAndFolders.js';
+import { getCloudImagesData } from '../../getCloudImagesData.js';
+import { getImsData } from '../../getImsData.js';
+export {} from '../cit-img-item/img-item.js';
+export {} from '../cit-folder-item/folder-item.js';
+export {} from '../cit-img-info/img-info.js';
+export {} from '../cit-ims-item/ims-item.js';
 
 /**
  * 
@@ -31,8 +33,10 @@ class CitUi extends Symbiote {
   init$ = {
     filesRenderData: {},
     foldersRenderData: {},
+    imsRenderData: [],
     isLoading: false,
     hasItems: true,
+    hasImsItems: false,
     selection: [],
     selectionSize: 0,
     hasSelection: false,
@@ -40,9 +44,12 @@ class CitUi extends Symbiote {
     current: null,
     embedCode: '...',
     filterSubstr: '',
+    tagFilterSubstr: '',
     message: '',
     altDescription: '',
+    tagsString: '',
     imsActive: false,
+    isImsExplorer: false,
     currentImsType: '',
     folderHistory: [],
     historyBackAvailable: false,
@@ -59,6 +66,15 @@ class CitUi extends Symbiote {
           return;
         }
         this.$.filterSubstr = e.target.value.trim();
+      }, 400);
+    },
+
+    onTagFilter: (e) => {
+      if (this.#filterTimeout) {  
+        clearTimeout(this.#filterTimeout);
+      }
+      this.#filterTimeout = window.setTimeout(() => {
+        this.$.tagFilterSubstr = e.target.value.trim();
       }, 400);
     },
 
@@ -129,6 +145,38 @@ class CitUi extends Symbiote {
       }
     },
 
+    toggleImsExplorer: async () => {
+      this.$.isImsExplorer = !this.$.isImsExplorer;
+      this.$.selection = [];
+      this.$.current = null;
+      if (this.$.isImsExplorer) {
+        await this.#loadImsData();
+      }
+    },
+
+    onImsDelete: async () => {
+      if (window.confirm(`🟡 This will remove selected IMS widgets. Are you sure?`)) {
+        this.$.isLoading = true;
+        this.$.message = `Removing ${this.$.selection.length} widget${this.$.selection.length > 1 ? 's' : ''}...`;
+        for (let hash of this.$.selection) {
+          await WsClient.send({
+            cmd: 'DELETE_IMS',
+            data: hash,
+          });
+        }
+      }
+    },
+
+    onImsEdit: () => {
+      if (this.$.selection.length === 1) {
+        let hash = this.$.selection[0];
+        let data = this.$.imsRenderData.find(item => item.hash === hash);
+        if (data) {
+          /** @type {any} */ (document.querySelector('cit-ims-composer')).open(data.imsType, data);
+        }
+      }
+    },
+
     onRemove: async () => {
       if (window.confirm(`🟡 This will remove selected images from:\n\n- CDN\n- Local disk\n- Data file entries\n\n Are you sure?`)) {
         this.$.isLoading = true;
@@ -158,22 +206,40 @@ class CitUi extends Symbiote {
       this.$.altDescription = e.target.value;
     },
 
-    onAltSave: async () => {
-      this.$.message = `Applying alt description to ${this.$.selection.length} image${this.$.selection.length > 1 ? 's' : ''}...`;
+    onTagsInput: (e) => {
+      this.$.tagsString = e.target.value;
+    },
+
+    onMetaSave: async () => {
+      this.$.message = `Applying meta data to ${this.$.selection.length} image${this.$.selection.length > 1 ? 's' : ''}...`;
+      
+      let tags = this.$.tagsString ? this.$.tagsString.split(',').map(t => t.trim()).filter(Boolean) : undefined;
+      let alt = this.$.altDescription || undefined;
       
       /** @type {Object<string, Partial<CloudImageDescriptor>>} */
       let update = {};
       this.$.selection.forEach((key) => {
-        this.$.filesRenderData[key].alt = this.$.altDescription;
-        update[key] = {
-          alt: this.$.altDescription,
-        };
+        let partialUpdate = {};
+        if (alt !== undefined) {
+          this.$.filesRenderData[key].alt = alt;
+          partialUpdate.alt = alt;
+        }
+        if (tags !== undefined) {
+          this.$.filesRenderData[key].tags = tags;
+          partialUpdate.tags = tags;
+        }
+        if (Object.keys(partialUpdate).length > 0) {
+          update[key] = partialUpdate;
+        }
       });
-      await WsClient.send({
-        cmd: 'EDIT',
-        data: update,
-      });
-      this.notify('filesRenderData');
+      
+      if (Object.keys(update).length > 0) {
+        await WsClient.send({
+          cmd: 'EDIT',
+          data: update,
+        });
+        this.notify('filesRenderData');
+      }
     },
 
     onEmbedCopy: async () => {
@@ -201,12 +267,16 @@ class CitUi extends Symbiote {
       if (!val) {
         return;
       }
-      this.ref.imgInfo.set$(val.localCtx.store, true);
-      this.$.embedCode = getImgCode(val.$.cdnId, CFG.variants, val.$.alt);
+      if (val.$.cdnId && !val.$.imsType) {
+        this.ref.imgInfo.set$(val.localCtx.store, true);
+        this.ref.imgInfo.removeAttribute('hidden');
+        this.$.embedCode = getImgCode(val.$.cdnId, CFG.variants, val.$.alt);
+      }
     });
-    this.sub('filterSubstr', async (val) => {
+    
+    const applyFilters = async () => {
       let cloudImagesData = await getCloudImagesData();
-      let rData = getFilesAndFolders(cloudImagesData, CFG.imgSrcFolder, val); 
+      let rData = getFilesAndFolders(cloudImagesData, CFG.imgSrcFolder, this.$.filterSubstr, this.$.tagFilterSubstr); 
       this.$.filesRenderData = rData.files;
       this.$.foldersRenderData = rData.folders;
       this.$.hasItems = Object.keys(rData.files).length > 0 || Object.keys(rData.folders).length > 0;
@@ -216,13 +286,22 @@ class CitUi extends Symbiote {
         return acc + Object.keys(rData.folders[folder].content).length;
       }, 0);
       this.$.filteredSize = Object.keys(rData.files).length + totalFoldersContentSize;
-    });
+    };
+    
+    this.sub('filterSubstr', applyFilters);
+    this.sub('tagFilterSubstr', applyFilters);
     this.sub('selection', (val) => {
       this.$.selectionSize = val.length;
       this.$.hasSelection = val.length > 0;
     });
     this.sub('folderHistory', (val) => {
       this.$.historyBackAvailable = !!val.length;
+    });
+
+    WsClient.onUpdateIms(() => {
+      if (this.$.isImsExplorer) {
+        this.#loadImsData();
+      }
     });
 
     WsClient.onUpdate(async () => {
@@ -269,6 +348,34 @@ class CitUi extends Symbiote {
         this.$.deselectAll();
       }
     });
+  }
+  
+  async #loadImsData() {
+    this.$.isLoading = true;
+    let data = await getImsData();
+    let renderData = [];
+    for (let hash in data) {
+      let previewUrl = '';
+      if (data[hash].imsType === 'diff') {
+        previewUrl = data[hash].img1 || data[hash].img2 || '';
+      } else if (data[hash].imsType === 'pano') {
+        previewUrl = data[hash].mapSrc || '';
+      } else if (data[hash].imsType === 'spinner') {
+        previewUrl = data[hash].srcTemplate?.replace('{num}', '1') || '';
+      } else if (data[hash].imsType === 'gallery') {
+        previewUrl = data[hash].images?.[0]?.src || '';
+      }
+      
+      renderData.push({
+        hash,
+        imsType: data[hash].imsType || 'unknown',
+        previewUrl,
+        ...data[hash]
+      });
+    }
+    this.$.imsRenderData = renderData;
+    this.$.hasImsItems = renderData.length > 0;
+    this.$.isLoading = false;
   }
 
 }

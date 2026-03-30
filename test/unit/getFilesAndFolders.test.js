@@ -1,6 +1,6 @@
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { getFilesAndFolders } from '../../src/dashboard/getFilesAndFolders.js';
+import { getFilesAndFolders } from '../../src/ui/getFilesAndFolders.js';
 
 /** @returns {CloudImageDescriptor} */
 function mockDescriptor(name) {

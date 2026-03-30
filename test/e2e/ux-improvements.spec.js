@@ -17,7 +17,7 @@ test.describe('Dashboard UX Improvements Phase 4', () => {
     await page.goto('/');
     await page.waitForTimeout(500);
 
-    const emptyState = page.locator('cit-ui >> css=[empty-state]');
+    const emptyState = page.locator('cit-ui >> css=[empty-state]').first();
     await expect(emptyState).toBeAttached();
 
     // In testing env, we use a mocked config with NO files but there is a 'store' folder
