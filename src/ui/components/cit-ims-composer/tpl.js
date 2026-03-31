@@ -37,7 +37,12 @@ export const IMS_COMPOSER_TPL = html`
           </div>
         </div>
       </div>
+
       <div column>
+        <cit-tabs write-to="APP/imsComposerMode">
+          <button tab="object-ui" style="--tab-color: #00fe87ff;">${icon('settings')} IMS Data Editor</button>
+          <button tab="json" style="--tab-color: #00c3ffff;">${icon('data_object')} Raw JSON</button>
+        </cit-tabs>
         <cit-ui-ctx read-from="APP/imsComposerMode">
           <div ui-ctx="json">
             <pre><code 

@@ -120,7 +120,7 @@ cit-ims-composer {
 
     x-object-ui-row {
       td {
-        background-color: rgba(255, 255, 255, .2);
+        background-color: rgba(255, 255, 255, .1);
 
         &.row-btn {
           line-height: 10px;
@@ -144,13 +144,13 @@ cit-ims-composer {
             height: var(--ui-size);
             width: var(--ui-size);
             border-radius: 100%;
-            background-color: rgba(0, 0, 0, .1);
+            background-color: rgba(0, 0, 0, .05);
             filter: grayscale(.2);
           }
         }
       }
       &:nth-of-type(even) > td {
-        background-color: rgba(244, 253, 255, .1) !important;
+        background-color: rgba(244, 253, 255, .05) !important;
       }
     }
 

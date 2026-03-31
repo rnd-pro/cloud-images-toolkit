@@ -21,39 +21,55 @@ export const CIT_UI_TPL = html`
   </button>
 </div>
 
-<div tiles-wrapper ref="tiles_wrapper" ${{'@hidden': 'isImsExplorer'}}>
-  <div loader ${{'@hidden': '!isLoading'}}>
-    ${icon('cloud_sync')}
-  </div>
-  <div empty-state ${{'@hidden': 'hasItems'}}>
-    ${icon('photo_library')}
-    <div title>No images found</div>
-    <div sub>Upload images to the configured local folder to see them here</div>
-  </div>
-  <div tiles ${{'@hidden': '!hasItems'}}>
-    <cit-back-btn></cit-back-btn>
-    <div 
-      itemize="foldersRenderData" 
-      item-tag="cit-folder-item" 
-      itemize-container></div>
-    <div 
-      itemize="filesRenderData" 
-      item-tag="cit-img-item" 
-      itemize-container></div>
-  </div>
-</div>
+<div>
+  <div viewport>
+    <cit-tabs write-to="APP/uiCtx">
+      <button tab="images" style="--tab-color: rgb(190 166 0);">Images</button>
+      <button tab="ims" style="--tab-color: #00c3ffff;">IMS Widgets</button>
+      <button tab="stories">Stories</button>
+      <button tab="video">Video</button>
+      <button tab="ai">AI</button>
+    </cit-tabs>
 
-<div tiles-wrapper ref="ims_wrapper" ${{'@hidden': '!isImsExplorer'}}>
-  <div empty-state ${{'@hidden': 'hasImsItems'}}>
-    ${icon('widgets')}
-    <div title>No IMS widgets found</div>
-    <div sub>Save widgets from the composer to see them here</div>
-  </div>
-  <div tiles ${{'@hidden': '!hasImsItems'}}>
-    <div 
-      itemize="imsRenderData" 
-      item-tag="cit-ims-item" 
-      itemize-container></div>
+    <cit-ui-ctx read-from="APP/uiCtx">
+
+      <div ui-ctx="images" ref="tiles_wrapper">
+        <div loader ${{'@hidden': '!isLoading'}}>
+          ${icon('cloud_sync')}
+        </div>
+        <div empty-state ${{'@hidden': 'hasItems'}}>
+          ${icon('photo_library')}
+          <div title>No images found</div>
+          <div sub>Upload images to the configured local folder to see them here</div>
+        </div>
+        <div tiles ${{'@hidden': '!hasItems'}}>
+          <cit-back-btn></cit-back-btn>
+          <div 
+            itemize="foldersRenderData" 
+            item-tag="cit-folder-item" 
+            itemize-container></div>
+          <div 
+            itemize="filesRenderData" 
+            item-tag="cit-img-item" 
+            itemize-container></div>
+        </div>
+      </div>
+
+      <div ui-ctx="ims" ref="ims_wrapper">
+        <div empty-state ${{'@hidden': 'hasImsItems'}}>
+          ${icon('widgets')}
+          <div title>No IMS widgets found</div>
+          <div sub>Save widgets from the composer to see them here</div>
+        </div>
+        <div tiles ${{'@hidden': '!hasImsItems'}}>
+          <div 
+            itemize="imsRenderData" 
+            item-tag="cit-ims-item" 
+            itemize-container></div>
+        </div>
+      </div>
+
+    </cit-ui-ctx>
   </div>
 </div>
 

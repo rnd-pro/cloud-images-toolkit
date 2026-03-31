@@ -39,7 +39,7 @@ cit-ui {
   border-radius: 10px;
   padding: 10px;
   font-family: sans-serif;
-  height: calc(100vh - 40px);
+  height: calc(100vh - 16px);
 
   * {
     box-sizing: border-box;
@@ -151,13 +151,10 @@ cit-ui {
     }
   }
 
-  [tiles-wrapper] {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100%;
+  [viewport] {
+    display: block;
+    height: calc(100vh - 36px);
     overflow: auto;
-    gap: 10px;
     background-color: rgba(255, 255, 255, 0.2);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     border-top: 2px solid rgba(0, 0, 0, 0.7);

@@ -16,6 +16,9 @@ const uxCtxList = [
   'ims',
   'json',
   'object-ui',
+  'stories',
+  'video',
+  'ai',
 ];
 
 CitUiCtx.rootStyles = css`
