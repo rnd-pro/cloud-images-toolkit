@@ -58,7 +58,7 @@ export const CIT_UI_TPL = html`
 </div>
 
 <div panel column>
-  <cit-ui-ctx>
+  <cit-ui-ctx read-from="APP/uiCtx">
     <cit-images-toolbar ${{'$.current': 'current', '$.hasSelection': 'hasSelection'}}></cit-images-toolbar>
     <cit-ims-toolbar ${{'$.current': 'current', '$.hasSelection': 'hasSelection'}}></cit-ims-toolbar>
   </cit-ui-ctx>

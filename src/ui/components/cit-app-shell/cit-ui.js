@@ -173,7 +173,7 @@ class CitUi extends Symbiote {
         /** @type {import('../cit-ims-composer/ims-composer.js').ImsComposer} */ 
         let composer = document.querySelector('cit-ims-composer');
         let imsData = this.$.current.$.imsData;
-        composer.open(imsData.imsType, imsData);
+        composer.open(imsData);
       }
     },
 

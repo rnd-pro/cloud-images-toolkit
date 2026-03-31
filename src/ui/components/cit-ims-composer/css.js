@@ -111,5 +111,54 @@ cit-ims-composer {
     min-width: 80px;
     min-height: 80px;
   }
+
+  x-object-ui {
+    --remove: '✕';
+    color: #fff;
+    margin: 0;
+    width: 100%;
+
+    x-object-ui-row {
+      td {
+        background-color: rgba(255, 255, 255, .2);
+
+        &.row-btn {
+          line-height: 10px;
+        }
+
+        &.value {
+          text-align: left;
+          line-height: 10px;
+
+          x-object-ui {
+            width: unset;
+            margin: var(--gap-mid);
+          }
+        }
+
+        &.row-btn {
+          button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            height: var(--ui-size);
+            width: var(--ui-size);
+            border-radius: 100%;
+            background-color: rgba(0, 0, 0, .1);
+            filter: grayscale(.2);
+          }
+        }
+      }
+      &:nth-of-type(even) > td {
+        background-color: rgba(244, 253, 255, .1) !important;
+      }
+    }
+
+    input[type="checkbox"] {
+      height: var(--ui-size);
+      width: var(--ui-size);
+      margin: 0;
+    }
+  }
 }
 `;

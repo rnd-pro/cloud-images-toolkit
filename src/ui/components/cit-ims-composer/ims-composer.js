@@ -22,15 +22,17 @@ export class ImsComposer extends Symbiote {
     return JSON.parse(this.ref.jsonEditor.textContent);
   }
 
-  open(imsType, srcData) {
+  open(srcData) {
     this.$['^imsActive'] = true;
     this.$['^currentImsType'] = null;
     this.$.srcData = JSON.stringify(srcData, undefined, 2);
+    this.$.imsData = srcData;
     this.#applyData(srcData);
   }
 
   init$ = {
     srcData: '',
+    imsData: null,
     imsDataUrl: '',
     htmlCode: '',
     jsonError: false,

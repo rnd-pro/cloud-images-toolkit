@@ -38,17 +38,24 @@ export const IMS_COMPOSER_TPL = html`
         </div>
       </div>
       <div column>
-        <pre><code 
-            contenteditable="true" 
-            spellcheck="false"
-            ref="jsonEditor" 
-            ${{
-              oninput: 'onJsonEdit',
-              '@error': 'jsonError',
-              textContent: 'srcData',
-            }}></code></pre>
+        <cit-ui-ctx read-from="APP/imsComposerMode">
+          <div ui-ctx="json">
+            <pre><code 
+                contenteditable="true" 
+              spellcheck="false"
+                ref="jsonEditor" 
+                ${{
+                oninput: 'onJsonEdit',
+                '@error': 'jsonError',
+                textContent: 'srcData',
+              }}></code></pre>
+          </div>
+          <div ui-ctx="object-ui">
+            <x-object-ui ${{'$.data': 'imsData'}} editable></x-object-ui>
+          </div>
+        </cit-ui-ctx>
       </div>
-    <div>
+    </div>
   </div>
 </div>
 `;

@@ -6,6 +6,16 @@ export const CIT_UI_CSS = css`
   --color-2: rgb(238, 238, 238);
   --color-3: rgb(51, 51, 51);
   --color-4: rgb(102, 102, 102);
+
+  --gap-min: 2px;
+  --gap-mid: 10px;
+  --gap-max: 20px;
+
+  --ui-size: 32px;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 @keyframes spin {
