@@ -97,7 +97,7 @@ cit-ims-composer {
     }
   }
 
-  ims-spinner, ims-diff, ims-gallery, ims-pano {
+  ims-viewer > * {
     max-height: calc(100% - 50px);
     height: 400px;
     background-color: #ccc;

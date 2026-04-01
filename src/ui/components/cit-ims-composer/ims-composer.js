@@ -7,6 +7,10 @@ import { ImsDiffData } from 'immersive-media-spots/wgt/diff/ImsDiffData.js';
 import { ImsGalleryData } from 'immersive-media-spots/wgt/gallery/ImsGalleryData.js';
 import { ImsPanoData } from 'immersive-media-spots/wgt/pano/ImsPanoData.js';
 import { ImsSpinnerData } from 'immersive-media-spots/wgt/spinner/ImsSpinnerData.js';
+import { ImsModelData } from 'immersive-media-spots/wgt/model/ImsModelData.js';
+import { ImsVideoData } from 'immersive-media-spots/wgt/video/ImsVideoData.js';
+import { ImsAudioData } from 'immersive-media-spots/wgt/audio/ImsAudioData.js';
+import { ImsMapData } from 'immersive-media-spots/wgt/map/ImsMapData.js';
 import { dataToImage } from 'immersive-media-spots/lib/dataToImage.js';
 import { sortBySubNumber } from '../../../iso/sortBySubNumber.js';
 // import imageToData from 'immersive-media-spots/lib/imageToData.js';
@@ -143,33 +147,44 @@ export class ImsComposer extends Symbiote {
     });
 
     this.sub('^currentImsType', async (/** @type {String} */ val) => {
-      // console.log(val);
       if (!val) return;
 
       let selection = [...sortBySubNumber(this.$['^selection'])];
-      if (!selection.length) return;
 
       let typeMap = {
         diff: ImsDiffData,
         gallery: ImsGalleryData,
         pano: ImsPanoData,
         spinner: ImsSpinnerData,
+        model: ImsModelData,
+        video: ImsVideoData,
+        audio: ImsAudioData,
+        map: ImsMapData,
       };
 
       let typeData = typeMap[val];
 
-      let srcData = new typeData({
-        urlTemplate: CFG.imgUrlTemplate,
-        variants: CFG.variants.filter((vnt) => {
-          return !Number.isNaN(parseFloat(vnt));
-        }),
-      });
+      let srcData = new typeData();
+      console.log(new ImsModelData());
 
-      let imgData = await getCloudImagesData();
-      for (let uid of selection) {
-        srcData.cdnIdList.push(imgData[uid].cdnId);
+      if (Object.hasOwn(srcData, 'urlTemplate')) {
+        srcData.urlTemplate = CFG.imgUrlTemplate;
       }
 
+      if (Object.hasOwn(srcData, 'variants')) {
+        srcData.variants = CFG.variants.filter((vnt) => {
+          return !Number.isNaN(parseFloat(vnt));
+        });
+      }
+
+      if (Object.hasOwn(srcData, 'cdnIdList')) {
+        let imgData = await getCloudImagesData();
+        for (let uid of selection) {
+          srcData.cdnIdList.push(imgData[uid].cdnId);
+        }
+      }
+
+      this.$.imsData = srcData;
       this.$.srcData = JSON.stringify(srcData, undefined, 2);
       this.#applyData(srcData);
     });
