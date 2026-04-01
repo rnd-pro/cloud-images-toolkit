@@ -46,6 +46,10 @@ export default class ImsItem extends Symbiote {
         diff: 'photo_library',
         pano: 'panorama_photosphere',
         spinner: 'motion_play',
+        model: '3d_rotation',
+        video: 'movie',
+        audio: 'audio_file',
+        map: 'map',
       }
       icn = iconMap[val.imsType] || 'widgets';
       this.$.typeIcon = icon(icn);
