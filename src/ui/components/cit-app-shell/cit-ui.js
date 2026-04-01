@@ -144,8 +144,8 @@ class CitUi extends Symbiote {
       }
     },
 
-    toggleImsExplorer: async () => {
-
+    loadImsData: () => {
+      this.loadImsData();
     },
 
     onImsDelete: async () => {
@@ -158,6 +158,7 @@ class CitUi extends Symbiote {
             data: hash,
           });
         }
+        this.loadImsData();
       }
     },
 
@@ -193,6 +194,9 @@ class CitUi extends Symbiote {
     reloadData: async () => {
       this.$.folderHistory = [];
       this.$.filterSubstr = '';
+      if (this.$['APP/uiCtx'] === 'ims') {
+        this.loadImsData();
+      }
     },
 
     onAltInput: (e) => {
@@ -277,7 +281,7 @@ class CitUi extends Symbiote {
       this.$.selection = [];
       this.$.current = null;
       if (val === 'ims') {
-        this.#loadImsData();
+        this.loadImsData();
       }
     });
     
@@ -307,7 +311,7 @@ class CitUi extends Symbiote {
 
     WsClient.onUpdateIms(() => {
       if (this.$.isImsExplorer) {
-        this.#loadImsData();
+        this.loadImsData();
       }
     });
 
@@ -357,7 +361,7 @@ class CitUi extends Symbiote {
     });
   }
   
-  async #loadImsData() {
+  async loadImsData() {
     this.$.isLoading = true;
     let data = await getImsData();
     let renderData = {};

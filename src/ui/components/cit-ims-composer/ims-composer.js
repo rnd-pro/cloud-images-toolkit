@@ -85,6 +85,9 @@ export class ImsComposer extends Symbiote {
         },
       });
       this.$['^message'] = 'Saving...';
+      window.setTimeout(() => {
+        this.$['^loadImsData']();
+      }, 200);
     },
 
     onSrcDataImageLocalPathInput: (e) => {
@@ -163,9 +166,7 @@ export class ImsComposer extends Symbiote {
       };
 
       let typeData = typeMap[val];
-
       let srcData = new typeData();
-      console.log(new ImsModelData());
 
       if (Object.hasOwn(srcData, 'urlTemplate')) {
         srcData.urlTemplate = CFG.imgUrlTemplate;
