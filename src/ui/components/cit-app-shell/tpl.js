@@ -23,11 +23,11 @@ export const CIT_UI_TPL = html`
 <div>
   <div viewport>
     <cit-tabs write-to="APP/uiCtx">
-      <button tab="images" style="--tab-color: rgb(190 166 0);">Images</button>
-      <button tab="ims" style="--tab-color: #00c3ffff;">IMS Widgets</button>
-      <button tab="stories">Stories</button>
-      <button tab="video">Video</button>
-      <button tab="ai">AI</button>
+      <button tab="images" style="--tab-color: rgb(190 166 0);">${icon('imagesmode')}Images</button>
+      <button tab="ims" style="--tab-color: #00c3ffff;">${icon('animated_images')}IMS Widgets</button>
+      <button tab="stories">${icon('auto_stories')}IMS Stories</button>
+      <button tab="video">${icon('play_circle')}Video</button>
+      <button tab="ai">${icon('robot')}AI Tools</button>
     </cit-tabs>
 
     <cit-ui-ctx read-from="APP/uiCtx">
@@ -38,8 +38,8 @@ export const CIT_UI_TPL = html`
         </div>
         <div empty-state ${{'@hidden': 'hasItems'}}>
           ${icon('photo_library')}
-          <div title>No images found</div>
-          <div sub>Upload images to the configured local folder to see them here</div>
+          <div title>No images yet...</div>
+          <div sub>Put images to the configured local folder to see them here</div>
         </div>
         <div tiles ${{'@hidden': '!hasItems'}}>
           <cit-back-btn></cit-back-btn>
@@ -56,7 +56,7 @@ export const CIT_UI_TPL = html`
 
       <div ui-ctx="ims" ref="ims_wrapper">
         <div empty-state ${{'@hidden': 'hasImsItems'}}>
-          ${icon('widgets')}
+          ${icon('animated_images')}
           <div title>No IMS widgets found</div>
           <div sub>Save widgets from the composer to see them here</div>
         </div>
@@ -65,6 +65,31 @@ export const CIT_UI_TPL = html`
             itemize="imsRenderData" 
             item-tag="cit-ims-item" 
             itemize-container></div>
+        </div>
+      </div>
+
+      <div ui-ctx="stories" tiles>
+        <div empty-state>
+          ${icon('auto_stories')}
+          <div title>IMS Stories</div>
+          <div sub>Coming soon...</div>
+          <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
+        </div>
+      </div>
+      <div ui-ctx="video" tiles>
+        <div empty-state>
+          ${icon('play_circle')}
+          <div title>Video</div>
+          <div sub>Coming soon...</div>
+          <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
+        </div>
+      </div>
+      <div ui-ctx="ai" tiles>
+        <div empty-state>
+          ${icon('robot')}
+          <div title>AI Tools</div>
+          <div sub>Coming soon...</div>
+          <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
         </div>
       </div>
 

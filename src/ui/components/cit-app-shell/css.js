@@ -18,6 +18,10 @@ export const CIT_UI_CSS = css`
   box-sizing: border-box;
 }
 
+a {
+  color: currentColor;
+}
+
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
@@ -232,7 +236,7 @@ cit-ui {
 
 
   [tiles] {
-    display: inline-flex;
+    display: flex;
     justify-content: center;
     flex-wrap: wrap;
     gap: 10px;
