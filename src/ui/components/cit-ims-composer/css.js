@@ -13,7 +13,8 @@ cit-ims-composer {
   background-color: rgba(255, 255, 255, .2);
   backdrop-filter: blur(6px);
   transition: opacity .3s;
-  padding: 20px;
+  padding-left: 40px;
+  padding-right: 40px;
 
   &:not([active]) {
     opacity: 0;
@@ -22,12 +23,12 @@ cit-ims-composer {
 
   [popup] {
     position: absolute;
+    top: 40px;
+    bottom: 40px;
     display: grid;
     grid-template-rows: min-content auto;
-    top: 40px;
-    left: 40px;
-    right: 40px;
-    bottom: 40px;
+    max-width: 1200px;
+    width: 100%;
     background-color: var(--color-1);
     border-radius: 6px;
     box-shadow: 0 0 12px rgba(0, 0, 0, .4);

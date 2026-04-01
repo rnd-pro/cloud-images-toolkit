@@ -131,10 +131,6 @@ export class ImsComposer extends Symbiote {
   }
 
   async #applyData(srcData) {
-    // let blob = new Blob([JSON.stringify(srcData)], {
-    //   type: 'application/json',
-    // });
-    // let url = URL.createObjectURL(blob);
     let srcDataString = JSON.stringify(srcData);
     let url = 'data:application/json;base64,' + btoa(srcDataString);
     this.$.imsDataUrl = url;
@@ -142,7 +138,6 @@ export class ImsComposer extends Symbiote {
     this.$.imsType = srcData.imsType;
     this.$.htmlCode = this.htmlEmbedCode;
     this.$.currentHash = await getHash(srcDataString);
-    // console.log(this.$.currentHash);
     this.$.ableToSave = !this.$.savedHashes.includes(this.$.currentHash);
     if (!this.$.srcDataImageLocalPath || this.$.ableToSave) {
       this.$.srcDataImageLocalPath = `${CFG.imgSrcFolder}ims-data-images/${srcData.imsType}_v${srcData.version}/${(new Date()).toISOString().split('T')[0] + '_' + this.$.currentHash.slice(0, 5)}.png`;
