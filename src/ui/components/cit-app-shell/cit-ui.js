@@ -248,6 +248,14 @@ class CitUi extends Symbiote {
       }
     },
 
+    onImsDraftsOpen: (e) => {
+      let imsType = e.target.getAttribute('ims-type');
+      if (imsType) {
+        this.$.currentImsType = imsType;
+        this.$.imsComposerActive = true;
+      }
+    },
+
     onHistoryBack: () => {
       this.$.folderHistory.pop();
       this.$.filterSubstr = this.$.folderHistory.length ? this.$.folderHistory.join('/') + '/' : '';
