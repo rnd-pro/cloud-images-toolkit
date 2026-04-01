@@ -181,7 +181,9 @@ export class ImsComposer extends Symbiote {
       if (Object.hasOwn(srcData, 'cdnIdList')) {
         let imgData = await getCloudImagesData();
         for (let uid of selection) {
-          srcData.cdnIdList.push(imgData[uid].cdnId);
+          if (imgData[uid] && imgData[uid].cdnId) {
+            srcData.cdnIdList.push(imgData[uid].cdnId);
+          }
         }
       }
 
