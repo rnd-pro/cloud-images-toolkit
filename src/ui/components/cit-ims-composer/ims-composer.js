@@ -65,6 +65,15 @@ export class ImsComposer extends Symbiote {
       }, 400);
     },
 
+    onObjectUiChange: (e) => {
+      let objUi = e.target.closest('x-object-ui');
+      if (objUi.value) {
+        this.$.imsData = objUi.value;
+        this.$.srcData = JSON.stringify(objUi.value, undefined, 2);
+        this.#applyData(objUi.value);
+      }
+    },
+
     onSrcDataCopy: async () => {
       if (this.$.jsonError) {
         this.$['^message'] = 'Source data object error occurred... Please, fix it before.';

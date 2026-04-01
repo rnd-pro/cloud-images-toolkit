@@ -18,8 +18,8 @@ export default class ImsItem extends Symbiote {
       } else {
         selectionSet.add(this.$._KEY_);
       }
-      this.$['^selection'] = Array.from(selectionSet);
       this.$['^current'] = this;
+      this.$['^selection'] = Array.from(selectionSet);
     }
 
     this.ondblclick = () => {

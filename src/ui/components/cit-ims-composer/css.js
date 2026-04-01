@@ -97,8 +97,14 @@ cit-ims-composer {
     }
   }
 
+  ims-viewer {
+    display: block;
+    height: 400px;
+    background-color: #ccc;
+    border-radius: 4px;
+  }
+
   ims-viewer > * {
-    max-height: calc(100% - 50px);
     height: 400px;
     background-color: #ccc;
     border-radius: 4px;

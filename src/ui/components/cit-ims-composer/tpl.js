@@ -56,7 +56,7 @@ export const IMS_COMPOSER_TPL = html`
               }}></code></pre>
           </div>
           <div ui-ctx="object-ui">
-            <x-object-ui ${{'$.data': 'imsData'}} editable></x-object-ui>
+            <x-object-ui ${{'$.data': 'imsData', onchange: 'onObjectUiChange'}} editable></x-object-ui>
           </div>
         </cit-ui-ctx>
       </div>
