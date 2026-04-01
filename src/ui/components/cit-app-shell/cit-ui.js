@@ -48,8 +48,7 @@ class CitUi extends Symbiote {
     message: '',
     altDescription: '',
     tagsString: '',
-    imsActive: false,
-    isImsExplorer: false,
+    imsComposerActive: false,
     currentImsType: '',
     folderHistory: [],
     historyBackAvailable: false,
@@ -146,13 +145,7 @@ class CitUi extends Symbiote {
     },
 
     toggleImsExplorer: async () => {
-      this.$.isImsExplorer = !this.$.isImsExplorer;
-      this.$.selection = [];
-      this.$.current = null;
-      if (this.$.isImsExplorer) {
-        await this.#loadImsData();
-      }
-      this.$['APP/uiCtx'] = this.$.isImsExplorer ? 'ims' : 'images';
+
     },
 
     onImsDelete: async () => {
@@ -269,6 +262,14 @@ class CitUi extends Symbiote {
       }
       if (val.$.cdnId && !val.$.imsType) {
         this.$.embedCode = getImgCode(val.$.cdnId, CFG.variants, val.$.alt);
+      }
+    });
+
+    this.sub('APP/uiCtx', (val) => {
+      this.$.selection = [];
+      this.$.current = null;
+      if (val === 'ims') {
+        this.#loadImsData();
       }
     });
     

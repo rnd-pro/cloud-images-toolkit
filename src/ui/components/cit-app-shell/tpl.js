@@ -11,7 +11,6 @@ export const CIT_UI_TPL = html`
   <button round ${{onclick: 'scrollTop'}}>${icon('arrow_upward')}</button>
   <button round current ${{'@disabled': '!current', onclick: 'scrollToCurrent'}}>${icon('flag')}</button>
   <button round ${{onclick: 'scrollBottom'}}>${icon('arrow_downward')}</button>
-  <button round ${{onclick: 'toggleImsExplorer'}} ${{'@current': 'isImsExplorer'}} title="Toggle IMS Widgets">${icon('widgets')}</button>
   <button round ${{onclick: 'onInvertBg'}}>${icon('contrast')}</button>
   <button round warning ${{'@disabled': '!current', onclick: 'clearCurrent'}}>${icon('variable_remove')}</button>
   <button round ${{onclick: 'reloadData'}}>${icon('refresh')}</button>

@@ -23,7 +23,7 @@ export class ImsComposer extends Symbiote {
   }
 
   open(srcData) {
-    this.$['^imsActive'] = true;
+    this.$['^imsComposerActive'] = true;
     this.$['^currentImsType'] = null;
     this.$.srcData = JSON.stringify(srcData, undefined, 2);
     this.$.imsData = srcData;
@@ -44,7 +44,7 @@ export class ImsComposer extends Symbiote {
     imsType: 'viewer',
 
     close: () => {
-      this.$['^imsActive'] = false;
+      this.$['^imsComposerActive'] = false;
     },
 
     onJsonEdit: () => {
@@ -134,7 +134,7 @@ export class ImsComposer extends Symbiote {
   }
 
   renderCallback() {
-    this.sub('^imsActive', (val) => {
+    this.sub('^imsComposerActive', (val) => {
       if (val) {
         this.setAttribute('active', '');
       } else {
