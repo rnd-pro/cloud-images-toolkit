@@ -180,17 +180,11 @@ cit-ui {
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: rgba(255, 255, 255, 0.3);
+      color: rgba(255, 255, 255, 0.6);
       gap: 16px;
 
       &[hidden] {
         display: none;
-      }
-
-      svg {
-        height: 64px;
-        width: 64px;
-        fill: currentColor;
       }
 
       [title] {

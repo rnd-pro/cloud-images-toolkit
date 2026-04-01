@@ -118,11 +118,11 @@ class CitUi extends Symbiote {
     },
 
     scrollTop: () => {
-      this.ref.tiles_wrapper.scrollTop = 0;
+      this.ref.viewport.scrollTop = 0;
     },
 
     scrollBottom: () => {
-      this.ref.tiles_wrapper.scrollTop = this.ref.tiles_wrapper.scrollHeight;
+      this.ref.viewport.scrollTop = this.ref.viewport.scrollHeight;
     },
 
     clearCurrent: () => {
@@ -131,7 +131,7 @@ class CitUi extends Symbiote {
     },
 
     onInvertBg: () => {
-      this.ref.tiles_wrapper.classList.toggle('inverted');
+      this.ref.viewport.classList.toggle('inverted');
     },
 
     onVariantClick: (e) => {
@@ -244,7 +244,7 @@ class CitUi extends Symbiote {
       let imsType = e.target.getAttribute('type');
       if (imsType) {
         this.$.currentImsType = imsType;
-        this.$.imsActive = true;
+        this.$.imsComposerActive = true;
       }
     },
 
