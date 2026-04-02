@@ -13,8 +13,16 @@ export const IMS_COMPOSER_TPL = html`
         <ims-viewer ${{'@src-data': 'imsDataUrl'}}></ims-viewer>
         <div toolbar caption="Source data object">
           <div controls>
+            <button accent ${{onclick: 'onSaveDataLocally', disabled: '!ableToSave'}}>${icon('save')}Save to IMS collection</button>
+            <button ${{onclick: 'onSaveFile'}}>${icon('save_as')}Save file</button>
             <button ${{onclick: 'onSrcDataCopy'}}>${icon('data_object')}Copy source data JSON</button>
-            <button ${{onclick: 'onSaveDataLocally', disabled: '!ableToSave'}}>${icon('save')}Save data locally</button>
+          </div>
+        </div>
+
+        <div toolbar caption="HTML Embed code">
+          <code embed-code contenteditable="true">{{htmlCode}}</code>
+          <div controls>
+            <button ${{onclick: 'onEmbedCodeCopy'}}>${icon('content_copy')}Copy embed code</button>
           </div>
         </div>
 
@@ -30,12 +38,6 @@ export const IMS_COMPOSER_TPL = html`
           </div>
         </div>
 
-        <div toolbar caption="HTML Embed code">
-          <code embed-code contenteditable="true">{{htmlCode}}</code>
-          <div controls>
-            <button ${{onclick: 'onEmbedCodeCopy'}}>${icon('content_copy')}Copy embed code</button>
-          </div>
-        </div>
       </div>
 
       <div column>

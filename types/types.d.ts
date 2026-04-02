@@ -22,6 +22,7 @@ declare type CITConfig = {
   uploadUrlTemplate: string,
   fetchUrlTemplate: string,
   removeUrlTemplate: string,
+  imsUrlTemplate: string,
   variants: string[],
   imgTypes: string[],
   wsPort: number,

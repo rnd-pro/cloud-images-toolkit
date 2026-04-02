@@ -23,7 +23,7 @@ export const CIT_UI_TPL = html`
 <div>
   <div viewport ref="viewport">
     <cit-tabs write-to="APP/uiCtx">
-      <button tab="images" style="--tab-color: rgba(223, 223, 0, 1);">${icon('imagesmode')}Images</button>
+      <button tab="images" style="--tab-color: var(--color-accent);">${icon('imagesmode')}Images</button>
       <button tab="ims" style="--tab-color: #00c3ffff;">${icon('animated_images')}IMS Widgets</button>
       <button tab="stories">${icon('auto_stories')}IMS Stories</button>
       <button tab="video">${icon('play_circle')}Video</button>

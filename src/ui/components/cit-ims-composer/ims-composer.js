@@ -99,6 +99,21 @@ export class ImsComposer extends Symbiote {
       }, 200);
     },
 
+    onSaveFile: () => {
+      if (this.$.jsonError) {
+        this.$['^message'] = 'Source data object error occurred... Please, fix it before.';
+        return;
+      }
+      let text = this.ref.jsonEditor.textContent;
+      let blob = new Blob([text], { type: 'application/json' });
+      let url = URL.createObjectURL(blob);
+      let a = document.createElement('a');
+      a.href = url;
+      a.download = `${this.$.imsType}_${this.$.currentHash.slice(0, 5)}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    },
+
     onSrcDataImageLocalPathInput: (e) => {
       this.$.srcDataImageLocalPath = e.target.value;
       console.log(this.$.srcDataImageLocalPath);
@@ -127,7 +142,8 @@ export class ImsComposer extends Symbiote {
   }
 
   get htmlEmbedCode() {
-    return /*html*/ `<ims-${this.$.imsType} src-data="${this.$.imsDataUrl}"></ims-${this.$.imsType}>`;
+    let url = CFG.imsUrlTemplate ? CFG.imsUrlTemplate.replace('{HASH}', this.$.currentHash) : this.$.imsDataUrl;
+    return /*html*/ `<ims-${this.$.imsType} src-data="${url}"></ims-${this.$.imsType}>`;
   }
 
   async #applyData(srcData) {
@@ -136,8 +152,8 @@ export class ImsComposer extends Symbiote {
     this.$.imsDataUrl = url;
     this.$.dataImageSrc = await dataToImage(srcData);
     this.$.imsType = srcData.imsType;
-    this.$.htmlCode = this.htmlEmbedCode;
     this.$.currentHash = await getHash(srcDataString);
+    this.$.htmlCode = this.htmlEmbedCode;
     this.$.ableToSave = !this.$.savedHashes.includes(this.$.currentHash);
     if (!this.$.srcDataImageLocalPath || this.$.ableToSave) {
       this.$.srcDataImageLocalPath = `${CFG.imgSrcFolder}ims-data-images/${srcData.imsType}_v${srcData.version}/${(new Date()).toISOString().split('T')[0] + '_' + this.$.currentHash.slice(0, 5)}.png`;
