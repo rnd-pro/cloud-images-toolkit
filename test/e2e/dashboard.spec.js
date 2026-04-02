@@ -9,7 +9,7 @@ test.describe('Dashboard', () => {
 
   test('page contains script module', async ({ page }) => {
     await page.goto('/');
-    let script = page.locator('script[type="module"]');
+    let script = page.locator('script[type="module"]').first();
     await expect(script).toBeAttached();
   });
 
