@@ -29,7 +29,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 ## Coming soon
 
 - Video publishing & video collections view
-- Advanced IMS editor
+- Advanced IMS-based hypermedia composer
 - Built-in AI image generation support and prompt editor
 - Image modifications and transformations:
   - Watermarks
@@ -90,7 +90,7 @@ Create a `cit-config.json` file in your project root. A reference template is in
 ```json
 {
   "syncDataPath": "./cit-sync-data.json",
-  "imsDataPath": "./ims-data.json",
+  "imsFolder": "./ims-widgets/",
   "imgSrcFolder": "./cit-store/",
   "apiKeyPath": "./CIT_API_KEY",
   "projectId": "<YOUR_PROJECT_ID>",
@@ -99,6 +99,7 @@ Create a `cit-config.json` file in your project root. A reference template is in
   "uploadUrlTemplate": "https://api.cloudflare.com/client/v4/accounts/{PROJECT}/images/v1",
   "fetchUrlTemplate": "https://api.cloudflare.com/client/v4/accounts/{PROJECT}/images/v1/{UID}/blob",
   "removeUrlTemplate": "https://api.cloudflare.com/client/v4/accounts/{PROJECT}/images/v1/{UID}",
+  "imsUrlTemplate": "https://<YOUR_DOMAIN>/ims/{HASH}.json",
   "variants": ["120", "320", "640", "860", "1024", "1200", "2048", "max"],
   "imgTypes": ["png", "jpg", "jpeg", "webp", "gif", "svg"],
   "wsPort": 8080,
