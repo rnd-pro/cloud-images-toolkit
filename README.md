@@ -18,7 +18,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 - Adaptive image embed code generation
 - Smart local caching - download cloud images only when needed
 - Built-in image management UI application
-- Interactive widget generation:
+- Interactive widget generation using [Immersive Media Spots (IMS)](https://github.com/rnd-pro/immersive-media-spots):
   - Image galleries
   - Panorama viewers
   - 360° object views
@@ -29,7 +29,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 ## Coming soon
 
 - Video publishing & video collections view
-- Advanced IMS-based hypermedia composer
+- Advanced [IMS](https://github.com/rnd-pro/immersive-media-spots)-based hypermedia composer
 - Built-in AI image generation support and prompt editor
 - Image modifications and transformations:
   - Watermarks
