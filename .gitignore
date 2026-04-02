@@ -17,6 +17,7 @@ dist
 env
 cit
 .last-run.json
+test-results/
 
 ## cloud images src folder
 cit-store/
