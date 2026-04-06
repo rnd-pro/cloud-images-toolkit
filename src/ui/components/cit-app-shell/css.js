@@ -358,6 +358,15 @@ cit-ui {
       background-color: var(--color-accent);
       color: #000;
     }
+
+    &[toggle-on] {
+      background-color: transparent;
+      color: var(--color-accent);
+      border: 2px solid currentColor;
+      span.material-symbols-outlined {
+        transform: rotate(180deg);
+      }
+    }
   }
 
   [footer] {

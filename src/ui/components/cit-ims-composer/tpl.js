@@ -20,6 +20,9 @@ export const IMS_COMPOSER_TPL = html`
         </div>
 
         <div toolbar caption="HTML Embed code">
+          <div controls>
+            <button ${{onclick: 'onCommonViewerToggle', '@toggle-on': 'useCommonViewer'}}>${icon('toggle_off')}Toggle Common Viewer</button>
+          </div>
           <code embed-code contenteditable="true">{{htmlCode}}</code>
           <div controls>
             <button ${{onclick: 'onEmbedCodeCopy'}}>${icon('content_copy')}Copy embed code</button>

@@ -39,6 +39,7 @@ export class ImsComposer extends Symbiote {
     imsData: null,
     imsDataUrl: '',
     htmlCode: '',
+    useCommonViewer: false,
     jsonError: false,
     dataImageSrc: '',
     srcDataImageLocalPath: '',
@@ -46,6 +47,11 @@ export class ImsComposer extends Symbiote {
     currentHash: '',
     ableToSave: false,
     imsType: 'viewer',
+
+    onCommonViewerToggle: (e) => {
+      this.$.useCommonViewer = !this.$.useCommonViewer;
+      this.$.htmlCode = this.htmlEmbedCode;
+    },
 
     close: () => {
       this.$['^imsComposerActive'] = false;
@@ -143,7 +149,8 @@ export class ImsComposer extends Symbiote {
 
   get htmlEmbedCode() {
     let url = CFG.imsUrlTemplate ? CFG.imsUrlTemplate.replace('{HASH}', this.$.currentHash) : this.$.imsDataUrl;
-    return /*html*/ `<ims-${this.$.imsType} src-data="${url}"></ims-${this.$.imsType}>`;
+    let tag = this.$.useCommonViewer ? 'ims-viewer' : `ims-${this.$.imsType}`;
+    return /*html*/ `<${tag} src-data="${url}"></${tag}>`;
   }
 
   async #applyData(srcData) {
