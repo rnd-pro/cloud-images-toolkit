@@ -53,7 +53,8 @@ export class ImsSync {
     if (!CFG.imsDataFolder) return;
     checkDir(CFG.imsDataFolder + '/tmp.json');
     let path = `${CFG.imsDataFolder}/${hash}.json`.replaceAll('//', '/');
-    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    let jsonStr = CFG.imsDataMinify === false ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+    fs.writeFileSync(path, jsonStr);
   }
 
   static delete(hash) {

@@ -91,6 +91,7 @@ Create a `cit-config.json` file in your project root. A reference template is in
 {
   "syncDataPath": "./cit-sync-data.json",
   "imsDataFolder": "./ims-widgets/",
+  "imsDataMinify": true,
   "imgSrcFolder": "./cit-store/",
   "apiKeyPath": "./CIT_API_KEY",
   "projectId": "<YOUR_PROJECT_ID>",

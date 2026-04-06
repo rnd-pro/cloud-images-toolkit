@@ -14,6 +14,7 @@ declare type CITConfig = {
   syncDataPath: string,
   imsDataPath: string,
   imsDataFolder?: string,
+  imsDataMinify?: boolean,
   imgSrcFolder: string,
   apiKey: string,
   projectId: string,
