@@ -1,6 +1,6 @@
 {
   "name": "cloud-images-toolkit",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "CIT - Cloud Images Toolkit for web developers. Manage image collections with CDN sync, adaptive embed code, and interactive widget generation.",
   "type": "module",
   "scripts": {

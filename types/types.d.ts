@@ -13,7 +13,7 @@ declare type CloudImageDescriptor = {
 declare type CITConfig = {
   syncDataPath: string,
   imsDataPath: string,
-  imsFolder: string,
+  imsDataFolder?: string,
   imgSrcFolder: string,
   apiKey: string,
   projectId: string,
@@ -22,7 +22,7 @@ declare type CITConfig = {
   uploadUrlTemplate: string,
   fetchUrlTemplate: string,
   removeUrlTemplate: string,
-  imsUrlTemplate: string,
+  imsUrlTemplate?: string,
   variants: string[],
   imgTypes: string[],
   wsPort: number,

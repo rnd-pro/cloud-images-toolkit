@@ -37,7 +37,7 @@ describe('FolderSync', () => {
 
     let config = {
       syncDataPath: syncDataPath,
-      imsFolder: path.join(TMP_DIR, 'ims-widgets'),
+      imsDataFolder: path.join(TMP_DIR, 'ims-widgets'),
       imgSrcFolder: path.join(TMP_DIR, 'store/'),
       apiKeyPath: './API_KEY',
       projectId: 'test-project',

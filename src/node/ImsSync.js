@@ -8,13 +8,13 @@ export class ImsSync {
 
   static getList() {
     let result = {};
-    if (!fs.existsSync(CFG.imsFolder)) {
+    if (!CFG.imsDataFolder || !fs.existsSync(CFG.imsDataFolder)) {
       return result;
     }
     
-    let files = fs.readdirSync(CFG.imsFolder);
+    let files = fs.readdirSync(CFG.imsDataFolder);
     files.forEach(file => {
-      const fullPath = `${CFG.imsFolder}/${file}`.replaceAll('//', '/');
+      const fullPath = `${CFG.imsDataFolder}/${file}`.replaceAll('//', '/');
       const stat = fs.lstatSync(fullPath);
       
       if (stat.isFile() && file.endsWith('.json')) {
@@ -32,11 +32,12 @@ export class ImsSync {
   }
 
   static start(onUpdateCallback) {
-    if (!fs.existsSync(CFG.imsFolder)) {
-      checkDir(CFG.imsFolder + '/tmp.json'); // small trick to create dir
+    if (!CFG.imsDataFolder) return;
+    if (!fs.existsSync(CFG.imsDataFolder)) {
+      checkDir(CFG.imsDataFolder + '/tmp.json'); // small trick to create dir
     }
 
-    fs.watch(CFG.imsFolder, {
+    fs.watch(CFG.imsDataFolder, {
       recursive: false,
     }, (eventType, fileName) => {
       if (fileName && fileName.endsWith('.json')) {
@@ -49,16 +50,18 @@ export class ImsSync {
   }
 
   static save(hash, data) {
-    checkDir(CFG.imsFolder + '/tmp.json');
-    let path = `${CFG.imsFolder}/${hash}.json`.replaceAll('//', '/');
+    if (!CFG.imsDataFolder) return;
+    checkDir(CFG.imsDataFolder + '/tmp.json');
+    let path = `${CFG.imsDataFolder}/${hash}.json`.replaceAll('//', '/');
     fs.writeFileSync(path, JSON.stringify(data, null, 2));
   }
 
   static delete(hash) {
-    let files = fs.readdirSync(CFG.imsFolder);
+    if (!CFG.imsDataFolder || !fs.existsSync(CFG.imsDataFolder)) return;
+    let files = fs.readdirSync(CFG.imsDataFolder);
     files.forEach(file => {
       if (file.startsWith(hash) && file.endsWith('.json')) {
-        let fullPath = `${CFG.imsFolder}/${file}`.replaceAll('//', '/');
+        let fullPath = `${CFG.imsDataFolder}/${file}`.replaceAll('//', '/');
         fs.unlinkSync(fullPath);
       }
     });
