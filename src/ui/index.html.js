@@ -26,7 +26,7 @@ export default /*html*/ `<!DOCTYPE html>
       }
     }
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/x-boost/render-tags/x-object-ui.js/+esm" type="module"></script>
+  <script src="https://cdn.jsdelivr.net/npm/x-boost/tags/x-cfg.js/+esm" type="module"></script>
   {{SCRIPT}}
 </head>
 <body>

@@ -72,7 +72,7 @@ export class ImsComposer extends Symbiote {
     },
 
     onObjectUiChange: (e) => {
-      let objUi = e.target.closest('x-object-ui');
+      let objUi = e.target.closest('x-cfg');
       if (objUi.value) {
         this.$.imsData = objUi.value;
         this.$.srcData = JSON.stringify(objUi.value, undefined, 2);

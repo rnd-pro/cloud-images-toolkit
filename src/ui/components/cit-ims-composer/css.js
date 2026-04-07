@@ -119,13 +119,13 @@ cit-ims-composer {
     min-height: 80px;
   }
 
-  x-object-ui {
+  x-cfg {
     --remove: '✕';
     color: #fff;
     margin: 0;
     width: 100%;
 
-    x-object-ui-row {
+    x-cfg-row {
       td {
         background-color: rgba(255, 255, 255, .1);
 
@@ -137,7 +137,7 @@ cit-ims-composer {
           text-align: left;
           line-height: 10px;
 
-          x-object-ui {
+          x-cfg {
             width: unset;
             margin: var(--gap-mid);
           }
