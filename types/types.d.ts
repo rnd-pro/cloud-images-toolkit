@@ -10,19 +10,36 @@ declare type CloudImageDescriptor = {
   srcFormat: string,
 };
 
+declare type CdnType = 'cloudflare' | 'cloudinary' | 'imagekit' | 'bunny';
+
+declare type CdnUploadResult = {
+  cdnId: string,
+  uploadDate: string,
+};
+
+declare type CdnConnector = {
+  name: string,
+  upload: (imgBytes: Uint8Array<ArrayBuffer>, fileName: string, cfg: CITConfig) => Promise<CdnUploadResult>,
+  fetchBlob: (cdnId: string, cfg: CITConfig) => Promise<ArrayBuffer>,
+  remove: (cdnId: string, cfg: CITConfig) => Promise<void>,
+  applyDefaults: (cfg: Partial<CITConfig>) => void,
+  parseApiKey: (apiKeyRaw: string) => void,
+};
+
 declare type CITConfig = {
+  cdn?: CdnType,
   syncDataPath: string,
   imsDataPath: string,
   imsDataFolder?: string,
   imsDataMinify?: boolean,
   imgSrcFolder: string,
   apiKey: string,
-  projectId: string,
-  imgUrlTemplate: string,
-  previewUrlTemplate: string,
-  uploadUrlTemplate: string,
-  fetchUrlTemplate: string,
-  removeUrlTemplate: string,
+  projectId?: string,
+  imgUrlTemplate?: string,
+  previewUrlTemplate?: string,
+  uploadUrlTemplate?: string,
+  fetchUrlTemplate?: string,
+  removeUrlTemplate?: string,
   imsUrlTemplate?: string,
   variants: string[],
   imgTypes: string[],
@@ -43,3 +60,4 @@ declare type WsMsgData = {
   hash?: string,
   srcData?: any,
 }
+

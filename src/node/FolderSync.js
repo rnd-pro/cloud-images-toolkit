@@ -1,5 +1,5 @@
 import fs from 'fs';
-import CFG from './CFG.js';
+import CFG, { cdnConnector } from './CFG.js';
 import { getAspectRatio } from '../iso/getAspectRatio.js';
 import imageSize from 'image-size';
 import { fillTpl } from '../iso/fillTpl.js';
@@ -80,28 +80,38 @@ async function processSrcFolder(folderPath) {
     try {
       let imgBytes = fs.readFileSync(imgPath);
       let imgDimensions = imageSize(new Uint8Array(imgBytes));
-  
-      const formData = new FormData();
-      formData.append('file', new File([imgBytes], imgPath.split('/').pop()));
-      formData.append('metadata', JSON.stringify({
-        localPath: imgPath,
-      }));
-      let uploadUrl = fillTpl(CFG.uploadUrlTemplate, {
-        PROJECT: CFG.projectId,
-      });
-      const response = await (await fetch(uploadUrl, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${CFG.apiKey}`,
-        },
-        body: formData,
-      })).json();
-      
+      let fileName = imgPath.split('/').pop();
+
+      /** @type {CdnUploadResult} */
+      let uploadResult;
+
+      if (cdnConnector) {
+        uploadResult = await cdnConnector.upload(imgBytes, fileName, CFG);
+      } else {
+        let formData = new FormData();
+        formData.append('file', new File([imgBytes], fileName));
+        formData.append('metadata', JSON.stringify({ localPath: imgPath }));
+        let uploadUrl = fillTpl(CFG.uploadUrlTemplate, {
+          PROJECT: CFG.projectId,
+        });
+        let response = await (await fetch(uploadUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${CFG.apiKey}`,
+          },
+          body: formData,
+        })).json();
+        uploadResult = {
+          cdnId: response.result.id,
+          uploadDate: response.result.uploaded,
+        };
+      }
+
       /** @type {CloudImageDescriptor} */
       let imgDesc = {
-        cdnId: response.result.id,
-        uploadDate: response.result.uploaded,
-        imageName: imgPath.split('/').pop(),
+        cdnId: uploadResult.cdnId,
+        uploadDate: uploadResult.uploadDate,
+        imageName: fileName,
         alt: '',
         tags: [],
         width: imgDimensions.width.toString(),
@@ -172,15 +182,21 @@ export class FolderSync {
       if (imgCloudData[imgPath] && !fs.existsSync(imgPath)) {
         let p = (async () => {
           try {
-            let imgBytes = await (await fetch(fillTpl(CFG.fetchUrlTemplate, {
-              UID: imgCloudData[imgPath].cdnId,
-              PROJECT: CFG.projectId,
-            }), {
-              method: 'GET',
-              headers: {
-                'Authorization': `Bearer ${CFG.apiKey}`,
-              },
-            })).arrayBuffer();
+            /** @type {ArrayBuffer} */
+            let imgBytes;
+            if (cdnConnector) {
+              imgBytes = await cdnConnector.fetchBlob(imgCloudData[imgPath].cdnId, CFG);
+            } else {
+              imgBytes = await (await fetch(fillTpl(CFG.fetchUrlTemplate, {
+                UID: imgCloudData[imgPath].cdnId,
+                PROJECT: CFG.projectId,
+              }), {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${CFG.apiKey}`,
+                },
+              })).arrayBuffer();
+            }
             checkDir(imgPath);
             fs.writeFileSync(imgPath, Buffer.from(imgBytes), {
               encoding: 'binary',
@@ -205,15 +221,19 @@ export class FolderSync {
       if (imgCloudData[imgPath]) {
         let p = (async () => {
           try {
-            await fetch(fillTpl(CFG.removeUrlTemplate, {
-              UID: imgCloudData[imgPath].cdnId,
-              PROJECT: CFG.projectId,
-            }), {
-              method: 'DELETE',
-              headers: {
-                'Authorization': `Bearer ${CFG.apiKey}`,
-              },
-            });
+            if (cdnConnector) {
+              await cdnConnector.remove(imgCloudData[imgPath].cdnId, CFG);
+            } else {
+              await fetch(fillTpl(CFG.removeUrlTemplate, {
+                UID: imgCloudData[imgPath].cdnId,
+                PROJECT: CFG.projectId,
+              }), {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${CFG.apiKey}`,
+                },
+              });
+            }
             delete imgCloudData[imgPath];
             if (fs.existsSync(imgPath)) {
               fs.unlinkSync(imgPath);

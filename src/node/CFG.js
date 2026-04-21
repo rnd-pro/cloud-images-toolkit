@@ -3,6 +3,7 @@ import path from 'path';
 
 import { getPath } from './getPath.js';
 import { createInterface } from 'readline';
+import { resolveConnector } from './connectors/index.js';
 
 const CONFIG_FILE = 'cit-config.json';
 const configPath = path.resolve(process.cwd(), CONFIG_FILE);
@@ -37,22 +38,32 @@ try {
   process.exit(1);
 }
 
-const REQUIRED_FIELDS = [
+const ALWAYS_REQUIRED = [
   'syncDataPath',
   'imgSrcFolder',
   'apiKeyPath',
-  'projectId',
-  'imgUrlTemplate',
-  'uploadUrlTemplate',
-  'fetchUrlTemplate',
-  'removeUrlTemplate',
   'variants',
   'imgTypes',
   'wsPort',
   'httpPort',
 ];
 
-let missing = REQUIRED_FIELDS.filter((f) => !(f in cfg));
+const TEMPLATE_FIELDS = [
+  'projectId',
+  'imgUrlTemplate',
+  'uploadUrlTemplate',
+  'fetchUrlTemplate',
+  'removeUrlTemplate',
+];
+
+let connector = resolveConnector(cfg);
+
+let requiredFields = [...ALWAYS_REQUIRED];
+if (!connector) {
+  requiredFields.push(...TEMPLATE_FIELDS);
+}
+
+let missing = requiredFields.filter((f) => !(f in cfg));
 if (missing.length) {
   console.error(`🔴 Missing required fields in ${CONFIG_FILE}: ${missing.join(', ')}`);
   process.exit(1);
@@ -68,8 +79,23 @@ if (!fs.existsSync(apiKeyPath)) {
 cfg.apiKey = fs.readFileSync(apiKeyPath, 'utf8').trim();
 delete cfg.apiKeyPath;
 
+if (connector) {
+  try {
+    connector.parseApiKey(cfg.apiKey);
+  } catch (err) {
+    console.error(`🔴 Invalid API key format for ${connector.name}: ${err.message}`);
+    process.exit(1);
+  }
+  connector.applyDefaults(cfg);
+  console.log(`✅ CDN connector: ${connector.name}`);
+}
+
 /**
  * @type {CITConfig}
  */
 export const CFG = cfg;
+
+/** @type {CdnConnector | null} */
+export const cdnConnector = connector;
+
 export default CFG;

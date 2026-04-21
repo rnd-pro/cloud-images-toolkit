@@ -23,7 +23,12 @@ A powerful toolkit for managing image collections directly in your codebase, wit
   - Panorama viewers
   - 360° object views
   - And more...
-- Native Cloudflare Images API support
+- Multi-CDN support with built-in connectors:
+  - [Cloudflare Images](https://developers.cloudflare.com/images/)
+  - [Cloudinary](https://cloudinary.com/)
+  - [ImageKit](https://imagekit.io/)
+  - [Bunny.net](https://bunny.net/)
+- Custom CDN endpoints via URL templates
 - Data-to-image encoding for the uniform asset control workflow (store your widgets data directly in image CDN)
 
 ## Coming soon
@@ -89,6 +94,7 @@ Create a `cit-config.json` file in your project root. A reference template is in
 
 ```json
 {
+  "cdn": "cloudflare",
   "syncDataPath": "./cit-sync-data.json",
   "imsDataFolder": "./ims-widgets/",
   "imsDataMinify": true,
@@ -97,9 +103,6 @@ Create a `cit-config.json` file in your project root. A reference template is in
   "projectId": "<YOUR_PROJECT_ID>",
   "imgUrlTemplate": "https://<YOUR_DOMAIN>/images/{UID}/{VARIANT}",
   "previewUrlTemplate": "https://<YOUR_DOMAIN>/images/{UID}/{VARIANT}",
-  "uploadUrlTemplate": "https://api.cloudflare.com/client/v4/accounts/{PROJECT}/images/v1",
-  "fetchUrlTemplate": "https://api.cloudflare.com/client/v4/accounts/{PROJECT}/images/v1/{UID}/blob",
-  "removeUrlTemplate": "https://api.cloudflare.com/client/v4/accounts/{PROJECT}/images/v1/{UID}",
   "imsUrlTemplate": "https://<YOUR_DOMAIN>/ims/{HASH}.json",
   "variants": ["120", "320", "640", "860", "1024", "1200", "2048", "max"],
   "imgTypes": ["png", "jpg", "jpeg", "webp", "gif", "svg"],
@@ -108,11 +111,9 @@ Create a `cit-config.json` file in your project root. A reference template is in
 }
 ```
 
-This configuration example is set to work with the [Cloudflare Images API](https://developers.cloudflare.com/images/). For other CDN and API providers, you may set custom endpoints or your own API-adapters.
+When the `cdn` field is set, CIT uses a built-in connector that auto-fills upload, fetch, and remove URL templates with provider-specific defaults. You can still override any template manually.
 
-To use custom URLs for your images, you need to enable this feature and configure it in your service provider dashboard. 
-
-In case you using Cloudflare Images, you can find the instructions [here](https://developers.cloudflare.com/images/manage-images/serve-images/serve-from-custom-domains/).
+To use custom URLs for your images, you need to enable this feature and configure it in your service provider dashboard.
 
 > **Important**: Add your image folder and API key file to `.gitignore`:
 > ```
@@ -120,6 +121,77 @@ In case you using Cloudflare Images, you can find the instructions [here](https:
 > CIT_API_KEY
 > cit-config.json
 > ```
+
+## CDN Connectors
+
+CIT includes built-in connectors for popular image CDN providers. Set the `cdn` field in your config to activate a connector.
+
+### Cloudflare Images
+
+```json
+{ "cdn": "cloudflare", "projectId": "<ACCOUNT_ID>" }
+```
+
+**API key file** (`CIT_API_KEY`): your Cloudflare Images API Bearer token.
+
+**Variants**: must be pre-created in your [Cloudflare Images dashboard](https://developers.cloudflare.com/images/manage-images/serve-images/serve-uploaded-images/). Use [custom domains](https://developers.cloudflare.com/images/manage-images/serve-images/serve-from-custom-domains/) for custom image URLs.
+
+### Cloudinary
+
+```json
+{ "cdn": "cloudinary" }
+```
+
+**API key file** (`CIT_API_KEY`): three values separated by colons:
+```
+cloud_name:api_key:api_secret
+```
+
+The `projectId` is auto-extracted from the cloud name. Variants map to Cloudinary's URL-based width transformations (e.g. variant `320` → `w_320,c_fit,f_auto,q_auto`).
+
+### ImageKit
+
+```json
+{ "cdn": "imagekit" }
+```
+
+**API key file** (`CIT_API_KEY`): two values separated by a colon:
+```
+private_key:url_endpoint
+```
+
+Example: `your_private_key:https://ik.imagekit.io/your_id`
+
+Variants map to ImageKit's URL-based transformations (e.g. variant `320` → `tr:w-320`).
+
+### Bunny.net
+
+```json
+{ "cdn": "bunny" }
+```
+
+**API key file** (`CIT_API_KEY`): three values separated by colons:
+```
+storage_password:storage_zone:pull_zone_url
+```
+
+Example: `your-password:my-zone:https://my-zone.b-cdn.net`
+
+Variants map to Bunny Optimizer query parameters (e.g. variant `320` → `?width=320`). Make sure [Bunny Optimizer](https://docs.bunny.net/docs/stream-image-processing) is enabled on your pull zone.
+
+### Custom / No Connector
+
+Omit the `cdn` field and provide all URL templates manually. CIT will use `Bearer` auth with the raw API key:
+
+```json
+{
+  "projectId": "<YOUR_PROJECT_ID>",
+  "imgUrlTemplate": "https://...",
+  "uploadUrlTemplate": "https://...",
+  "fetchUrlTemplate": "https://...",
+  "removeUrlTemplate": "https://..."
+}
+```
 
 ## Variants
 
@@ -129,7 +201,7 @@ For example, if you have a variant named `120`, CIT will generate the URL for th
 
 It's a good practice to create variants for the screens with different DPI. For example, you can create a variant for the image with the width of `120` and the DPI of 1.0, and another variant for the image with the width of `240` and the DPI of 2.0.
 
-In case you using the Cloudflare Images API, you need to create the variants in your Cloudflare Images account. More details you can find [here](https://developers.cloudflare.com/images/manage-images/serve-images/serve-uploaded-images/).
+For Cloudflare Images, variants must be pre-created in the Cloudflare dashboard. For Cloudinary, ImageKit, and Bunny.net, variants are applied dynamically via URL-based transformations.
 
 ## Troubleshooting
 
@@ -137,7 +209,7 @@ In case you using the Cloudflare Images API, you need to create the variants in 
 CIT looks for `cit-config.json` in the current working directory. Make sure you're running the command from your project root. When run without a config, CIT will offer to create one from the reference template.
 
 ### API key errors
-Ensure your API key file path in `cit-config.json` points to a valid file containing your Cloudflare Images API token.
+Ensure your API key file path in `cit-config.json` points to a valid file. The file format depends on your CDN connector — see the [CDN Connectors](#cdn-connectors) section for details.
 
 ### Port conflicts
 If ports `8080` or `8081` are in use, update `wsPort` and `httpPort` in your config file.

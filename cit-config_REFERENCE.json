@@ -1,4 +1,5 @@
 {
+  "cdn": "cloudflare",
   "syncDataPath": "./cit-sync-data.json",
   "imsDataFolder": "./ims-widgets/",
   "imsDataMinify": true,
