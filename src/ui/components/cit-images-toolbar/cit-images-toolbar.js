@@ -8,8 +8,8 @@ export class CitImagesToolbar extends Symbiote {
     hasSelection: false,
   }
   
-  connectedCallback() {
-    super.connectedCallback();
+  constructor() {
+    super();
     this.setAttribute('ui-ctx', 'images');
   }
 }

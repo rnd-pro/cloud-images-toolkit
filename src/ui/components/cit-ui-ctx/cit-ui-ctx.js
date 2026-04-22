@@ -1,34 +1,39 @@
 import Symbiote, { css } from '@symbiotejs/symbiote';
 
 export class CitUiCtx extends Symbiote {
-  initCallback() {
+
+  activate() {
     let readFrom = this.getAttribute('read-from');
+    let ctxEls = [...this.querySelectorAll('[ui-ctx]')];
     if (readFrom) {
       this.sub(readFrom, (val) => {
-        this.setAttribute('ui-ctx', val);
+        ctxEls.forEach(el => {
+          el.removeAttribute('active');
+          if (el.getAttribute('ui-ctx') === val) {
+            el.setAttribute('active', '');
+          }
+        });
       });
     }
   }
-}
 
-const uxCtxList = [
-  'images',
-  'ims',
-  'json',
-  'object-ui',
-  'stories',
-  'video',
-  'ai',
-];
+  renderCallback() {
+    queueMicrotask(() => {
+      this.activate();
+    });
+  }
+
+}
 
 CitUiCtx.rootStyles = css`
 cit-ui-ctx {
   display: contents;
-  ${uxCtxList.map(ctx => `
-    &:not([ui-ctx="${ctx}"]) > [ui-ctx="${ctx}"] {
-      display: none;
+  [ui-ctx] {
+    display: none;
+    &[active] {
+      display: contents;
     }
-  `).join('')}
+  }
 }
 `;
 

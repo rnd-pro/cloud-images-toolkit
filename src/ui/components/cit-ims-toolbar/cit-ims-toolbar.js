@@ -7,11 +7,12 @@ export class CitImagesToolbar extends Symbiote {
     current: null,
     hasSelection: false,
   }
-  
-  connectedCallback() {
-    super.connectedCallback();
+
+  constructor() {
+    super();
     this.setAttribute('ui-ctx', 'ims');
   }
+  
 }
 
 CitImagesToolbar.rootStyles = css`
