@@ -47,6 +47,19 @@ cit-ui {
   font-family: sans-serif;
   height: calc(100vh - 16px);
 
+  --img-item-bg: #212121;
+  &.inverted {
+    --img-item-bg: #eee;
+
+    button {
+      &[round] {
+        &[invert-bg] {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+
   * {
     box-sizing: border-box;
   }
@@ -168,10 +181,6 @@ cit-ui {
     border-radius: 6px;
     content-visibility: auto;
 
-    --img-item-bg: #212121;
-    &.inverted {
-      --img-item-bg: #eee;
-    }
     &[hidden] {
       display: none;
     }

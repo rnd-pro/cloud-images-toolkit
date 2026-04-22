@@ -131,7 +131,7 @@ class CitUi extends Symbiote {
     },
 
     onInvertBg: () => {
-      this.ref.viewport.classList.toggle('inverted');
+      this.classList.toggle('inverted');
     },
 
     onVariantClick: (e) => {

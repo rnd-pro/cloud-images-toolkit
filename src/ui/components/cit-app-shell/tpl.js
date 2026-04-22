@@ -8,12 +8,12 @@ export const CIT_UI_TPL = html`
   rel="stylesheet" />
 
 <div panel column>
-  <button round ${{onclick: 'scrollTop'}}>${icon('arrow_upward')}</button>
-  <button round current ${{'@disabled': '!current', onclick: 'scrollToCurrent'}}>${icon('flag')}</button>
-  <button round ${{onclick: 'scrollBottom'}}>${icon('arrow_downward')}</button>
-  <button round ${{onclick: 'onInvertBg'}}>${icon('contrast')}</button>
-  <button round warning ${{'@disabled': '!current', onclick: 'clearCurrent'}}>${icon('variable_remove')}</button>
-  <button round ${{onclick: 'reloadData'}}>${icon('refresh')}</button>
+  <button round ${{onclick: 'scrollTop'}} title="Scroll to Top">${icon('arrow_upward')}</button>
+  <button round current ${{'@disabled': '!current', onclick: 'scrollToCurrent'}} title="Go to Current Item">${icon('flag')}</button>
+  <button round ${{onclick: 'scrollBottom'}} title="Scroll to Bottom">${icon('arrow_downward')}</button>
+  <button round invert-bg ${{onclick: 'onInvertBg'}} title="Invert Tile Background">${icon('contrast')}</button>
+  <button round warning ${{'@disabled': '!current', onclick: 'clearCurrent'}} title="Clear Current Item">${icon('variable_remove')}</button>
+  <button round ${{onclick: 'reloadData'}} title="Reload Data">${icon('refresh')}</button>
   <div style="flex-grow: 1;"></div>
   <button round disabled ${{'style.color': 'wsStatusColor', '@title': 'wsStatus'}}>
     <span class="material-symbols-outlined">{{wsStatusIcon}}</span>
