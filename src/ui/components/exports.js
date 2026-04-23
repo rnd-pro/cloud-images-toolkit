@@ -8,4 +8,6 @@ export {} from './cit-ui-ctx/cit-ui-ctx.js';
 export {} from './cit-images-toolbar/cit-images-toolbar.js';
 export {} from './cit-ims-toolbar/cit-ims-toolbar.js';
 export {} from './cit-tabs/cit-tabs.js';
+export {} from './cit-left-panel/cit-left-panel.js';
+export {} from './cit-collection-profiles/cit-collection-profiles.js';
 

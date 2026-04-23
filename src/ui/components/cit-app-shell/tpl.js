@@ -1,9 +1,6 @@
 import { html } from '@symbiotejs/symbiote';
 import { icon } from '../../icon.js';
-import { configs } from '../../../node/CFG.js';
 export { BackBtn } from '../cit-back-btn/back-btn.js';
-
-let collectionOptions = configs.map((c, i) => `<option value="${i}">${c.name || 'Collection ' + i}</option>`).join('');
 
 export const CIT_UI_TPL = html`
 <link 
@@ -11,25 +8,12 @@ export const CIT_UI_TPL = html`
   rel="stylesheet" />
 
 <div panel column>
-  <button round ${{onclick: 'scrollTop'}} title="Scroll to Top">${icon('arrow_upward')}</button>
-  <button round current ${{'@disabled': '!current', onclick: 'scrollToCurrent'}} title="Go to Current Item">${icon('flag')}</button>
-  <button round ${{onclick: 'scrollBottom'}} title="Scroll to Bottom">${icon('arrow_downward')}</button>
-  <button round invert-bg ${{onclick: 'onInvertBg'}} title="Invert Tile Background">${icon('contrast')}</button>
-  <button round warning ${{'@disabled': '!current', onclick: 'clearCurrent'}} title="Clear Current Item">${icon('variable_remove')}</button>
-  <button round ${{onclick: 'reloadData'}} title="Reload Data">${icon('refresh')}</button>
-  <div style="flex-grow: 1;"></div>
-  <button round disabled ${{'style.color': 'wsStatusColor', '@title': 'wsStatus'}}>
-    <span class="material-symbols-outlined">{{wsStatusIcon}}</span>
-  </button>
+  <cit-left-panel></cit-left-panel>
 </div>
 
 <div>
   <div viewport ref="viewport">
-    <div collection-bar ${{'@hidden': '!multiMode'}}>
-      <select ${{onchange: 'onCollectionChange'}} collection-select>
-        ${collectionOptions}
-      </select>
-    </div>
+
     <cit-tabs write-to="APP/uiCtx">
       <button tab="images" style="--tab-color: var(--color-accent);">${icon('imagesmode')}Images</button>
       <button tab="ims" style="--tab-color: #00c3ffff;">${icon('animated_images')}IMS Widgets</button>
@@ -115,4 +99,5 @@ export const CIT_UI_TPL = html`
 </div>
 
 <cit-ims-composer></cit-ims-composer>
+<cit-collection-profiles></cit-collection-profiles>
 `;
