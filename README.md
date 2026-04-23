@@ -127,6 +127,15 @@ To use custom URLs for your images, you need to enable this feature and configur
 > cit-config.json
 > ```
 
+### URL Template Syntax
+
+CIT uses specific macros in URL templates to dynamically construct paths. These macros are automatically replaced with runtime values:
+
+- `{UID}` — The unique identifier of the image (typically the CDN ID).
+- `{VARIANT}` — The specific variant string requested (e.g., `320`, `public`).
+- `{PROJECT}` — Your configured `projectId` (e.g., Cloudflare Account ID, Cloudinary Cloud Name).
+- `{HASH}` — The MD5 hash used in the `imsUrlTemplate` to identify an Interactive Media Spot (IMS) descriptor file.
+
 ## CDN Connectors
 
 CIT includes built-in connectors for popular image CDN providers. Set the `cdn` field in your config to activate a connector.
