@@ -93,7 +93,6 @@ for (let i = 0; i < configArray.length; i++) {
   }
 
   cfg.apiKey = fs.readFileSync(apiKeyPath, 'utf8').trim();
-  delete cfg.apiKeyPath;
 
   if (connector) {
     try {

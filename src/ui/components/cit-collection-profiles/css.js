@@ -10,7 +10,7 @@ cit-collection-profiles {
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 10000;
+  z-index: 1000;
   backdrop-filter: blur(10px);
   padding: 10px;
   transition: opacity .3s;

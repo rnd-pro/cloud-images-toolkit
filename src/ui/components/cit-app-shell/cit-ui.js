@@ -55,12 +55,7 @@ class CitUi extends Symbiote {
     wsStatus: 'connecting',
     wsStatusIcon: 'sync',
     wsStatusColor: 'var(--color-4)',
-    activeCollectionIndex: 0,
     multiMode: configs.length > 1,
-
-    onCollectionChange: (e) => {
-      this.$.activeCollectionIndex = parseInt(e.target.value, 10);
-    },
     
     onFilter: (e) => {
       if (this.#filterTimeout) {  
@@ -143,7 +138,7 @@ class CitUi extends Symbiote {
     onVariantClick: (e) => {
       let variant = e.target.getAttribute('variant');
       if (variant) {
-        let activeCfg = configs[this.$.activeCollectionIndex] || CFG;
+        let activeCfg = configs[this.$['APP/collectionIndex']] || CFG;
         window.open(fillTpl(activeCfg.imgUrlTemplate, {
           UID: this.$.current.$.cdnId,
           VARIANT: variant,
@@ -162,7 +157,7 @@ class CitUi extends Symbiote {
         for (let hash of this.$.selection) {
           await WsClient.send({
             cmd: 'DELETE_IMS',
-            data: { hash, collectionIndex: this.$.activeCollectionIndex },
+            data: { hash, collectionIndex: this.$['APP/collectionIndex'] },
           });
         }
         this.loadImsData();
@@ -184,7 +179,7 @@ class CitUi extends Symbiote {
         this.$.message = `Removing ${this.$.selection.length} image${this.$.selection.length > 1 ? 's' : ''}...`;
         await WsClient.send({
           cmd: 'REMOVE',
-          data: { selection: this.$.selection, collectionIndex: this.$.activeCollectionIndex },
+          data: { selection: this.$.selection, collectionIndex: this.$['APP/collectionIndex'] },
         });
       }
     },
@@ -194,7 +189,7 @@ class CitUi extends Symbiote {
       this.$.message = `Fetching remote images...`;
       await WsClient.send({
         cmd: 'FETCH',
-        data: { selection: this.$.selection, collectionIndex: this.$.activeCollectionIndex },
+        data: { selection: this.$.selection, collectionIndex: this.$['APP/collectionIndex'] },
       });
     },
 
@@ -240,7 +235,7 @@ class CitUi extends Symbiote {
       if (Object.keys(update).length > 0) {
         await WsClient.send({
           cmd: 'EDIT',
-          data: { update, collectionIndex: this.$.activeCollectionIndex },
+          data: { update, collectionIndex: this.$['APP/collectionIndex'] },
         });
         this.notify('filesRenderData');
       }
@@ -279,7 +274,7 @@ class CitUi extends Symbiote {
       if (!val) {
         return;
       }
-      let activeCfg = configs[this.$.activeCollectionIndex] || CFG;
+      let activeCfg = configs[this.$['APP/collectionIndex']] || CFG;
       if (val.$.cdnId && !val.$.imsType) {
         this.$.embedCode = getImgCode(val.$.cdnId, activeCfg.variants, val.$.alt);
       }
@@ -294,8 +289,8 @@ class CitUi extends Symbiote {
     });
     
     const applyFilters = async () => {
-      let activeCfg = configs[this.$.activeCollectionIndex] || CFG;
-      let cloudImagesData = await getCloudImagesData(this.$.activeCollectionIndex);
+      let activeCfg = configs[this.$['APP/collectionIndex']] || CFG;
+      let cloudImagesData = await getCloudImagesData(this.$['APP/collectionIndex']);
       let rData = getFilesAndFolders(cloudImagesData, activeCfg.imgSrcFolder, this.$.filterSubstr, this.$.tagFilterSubstr); 
       this.$.filesRenderData = rData.files;
       this.$.foldersRenderData = rData.folders;
@@ -310,7 +305,7 @@ class CitUi extends Symbiote {
     
     this.sub('filterSubstr', applyFilters);
     this.sub('tagFilterSubstr', applyFilters);
-    this.sub('activeCollectionIndex', applyFilters);
+    this.sub('APP/collectionIndex', applyFilters);
     this.sub('selection', (val) => {
       this.$.selectionSize = val.length;
       this.$.hasSelection = val.length > 0;
@@ -373,7 +368,7 @@ class CitUi extends Symbiote {
   
   async loadImsData() {
     this.$.isLoading = true;
-    let data = await getImsData(this.$.activeCollectionIndex);
+    let data = await getImsData(this.$['APP/collectionIndex']);
     let renderData = {};
     for (let hash in data) {
       let previewUrl = '';

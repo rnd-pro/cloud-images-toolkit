@@ -51,7 +51,7 @@ declare type CITConfig = {
 
 declare type CITRawConfig = CITConfig | CITConfig[];
 
-declare type WsCmdType = 'HELLO' | 'FETCH' | 'REMOVE' | 'UPDATE' | 'EDIT' | 'TEXT' | 'SAVE_IMS' | 'PUB_DATA_IMG' | 'DELETE_IMS' | 'UPDATE_IMS';
+declare type WsCmdType = 'HELLO' | 'FETCH' | 'REMOVE' | 'UPDATE' | 'EDIT' | 'TEXT' | 'SAVE_IMS' | 'PUB_DATA_IMG' | 'DELETE_IMS' | 'UPDATE_IMS' | 'SAVE_CONFIG';
 
 declare type WsMsg = {
   cmd: WsCmdType,
@@ -64,5 +64,6 @@ declare type WsMsgData = {
   hash?: string,
   srcData?: any,
   collectionIndex?: number,
+  config?: CITConfig,
 }
 

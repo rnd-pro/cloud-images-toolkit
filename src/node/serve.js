@@ -98,6 +98,22 @@ wss.on('connection', (ws) => {
         data: 'Source data image is uploaded!',
       }));
     },
+    SAVE_CONFIG: async (/** @type {WsMsgData} */ msgData) => {
+      let idx = msgData.collectionIndex ?? 0;
+      let newCfg = msgData.config;
+      let rawCfg = JSON.parse(fs.readFileSync('cit-config.json', 'utf8'));
+      if (Array.isArray(rawCfg)) {
+        rawCfg[idx] = newCfg;
+      } else {
+        // Fallback for single object configs
+        rawCfg = newCfg;
+      }
+      fs.writeFileSync('cit-config.json', JSON.stringify(rawCfg, null, 2));
+      ws.send(JSON.stringify({
+        cmd: 'TEXT',
+        data: 'Collection profile saved! Please restart the CIT server to fully apply changes.',
+      }));
+    },
   };
 
   ws.on('message', (message) => {

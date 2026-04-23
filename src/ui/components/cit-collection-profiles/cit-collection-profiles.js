@@ -2,6 +2,7 @@ import Symbiote from '@symbiotejs/symbiote';
 import { styles } from './css.js';
 import { template } from './tpl.js';
 import { configs } from '../../../node/CFG.js';
+import { WsClient } from '../../WsClient.js';
 
 export class CitCollectionProfiles extends Symbiote {
 
@@ -11,30 +12,51 @@ export class CitCollectionProfiles extends Symbiote {
         name: cfg.name || `Collection ${i}`,
         idx: i,
         cfg,
-        cfgModified: false,
+        modified: false,
         current: i === this.$['APP/collectionIndex'],
       }
     }),
 
-    onCfgChange: () => {
-      console.log('onCfgChange');
-    },
-
-    applyChanges: () => {
-      const currentCfg = this.$['configs'].find((c) => c.current);
-      if (currentCfg) {
-        this.$['APP/collections'][this.$['APP/collectionIndex']] = currentCfg.cfg;
-        this.$['configs'] = this.$['configs'].map((c) => ({
-          ...c,
-          cfgModified: false,
-        }));
+    onCfgChange: (e) => {
+      let itemComponent = e.target.closest('cit-collection-item');
+      if (itemComponent) {
+        itemComponent.$.modified = true;
+        let xCfg = e.target.closest('x-cfg');
+        if (xCfg) {
+          itemComponent.$.cfg = xCfg.value;
+        }
       }
     },
 
-    onActivate: () => {
-      const currentCfg = this.$['configs'].find((c) => c.current);
-      if (currentCfg) {
-        this.$['APP/collectionIndex'] = currentCfg.idx;
+    applyChanges: async (e) => {
+      let itemComponent = e.target.closest('cit-collection-item');
+      if (itemComponent) {
+        let idx = itemComponent.$.idx;
+        let newCfg = itemComponent.$.cfg;
+        await WsClient.send({
+          cmd: 'SAVE_CONFIG',
+          data: {
+            collectionIndex: idx,
+            config: newCfg
+          }
+        });
+        itemComponent.$.modified = false;
+      }
+    },
+
+    onActivate: (e) => {
+      let itemComponent = e.target.closest('cit-collection-item');
+      if (itemComponent) {
+        let idx = itemComponent.$.idx;
+        this.$['APP/collectionIndex'] = idx;
+        
+        // Update visual current state for all items
+        let domItems = this.querySelectorAll('cit-collection-item');
+        domItems.forEach(item => {
+          // @ts-ignore
+          item.$.current = item.$.idx === idx;
+        });
+
         this.$['APP/collectionProfilesActive'] = false;
       }
     },

@@ -11,7 +11,7 @@ export const template = html`
     <div itemize="configs" item-tag="cit-collection-item">
       <template>
         <div>{{name}}</div>
-        <x-cfg ${{'$.data': 'cfg', onchange: 'onCfgChange'}} editable></x-cfg>
+        <x-cfg ${{'$.data': 'cfg', onchange: '^onCfgChange'}} editable></x-cfg>
         <div controls>
           <button ${{onclick: '^applyChanges', '@disabled': '!modified'}} title="Apply Changes">${icon('save')} Apply Changes</button>
           <button accent ${{onclick: '^onActivate'}} title="Activate Profile">${icon('check')} Activate Profile</button>
