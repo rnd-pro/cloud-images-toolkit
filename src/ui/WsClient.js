@@ -18,6 +18,10 @@ export class WsClient {
           this.updateImsCallbacks?.forEach(cb => cb());
         } else if (wsm.cmd === 'TEXT') {
           this.textCallbacks?.forEach(cb => cb(wsm.data));
+        } else if (wsm.cmd === 'RELOAD') {
+          setTimeout(() => {
+            window.location.reload();
+          }, 1500);
         }
       } catch (err) {
         console.error('Failed to parse WS message', err);

@@ -111,8 +111,15 @@ wss.on('connection', (ws) => {
       fs.writeFileSync('cit-config.json', JSON.stringify(rawCfg, null, 2));
       ws.send(JSON.stringify({
         cmd: 'TEXT',
-        data: 'Collection profile saved! Please restart the CIT server to fully apply changes.',
+        data: 'Collection profile saved! Restarting CIT server...',
       }));
+      setTimeout(() => {
+        ws.send(JSON.stringify({
+          cmd: 'RELOAD',
+          data: null,
+        }));
+        setTimeout(() => process.exit(2), 200);
+      }, 500);
     },
   };
 

@@ -51,7 +51,7 @@ declare type CITConfig = {
 
 declare type CITRawConfig = CITConfig | CITConfig[];
 
-declare type WsCmdType = 'HELLO' | 'FETCH' | 'REMOVE' | 'UPDATE' | 'EDIT' | 'TEXT' | 'SAVE_IMS' | 'PUB_DATA_IMG' | 'DELETE_IMS' | 'UPDATE_IMS' | 'SAVE_CONFIG';
+declare type WsCmdType = 'HELLO' | 'FETCH' | 'REMOVE' | 'UPDATE' | 'EDIT' | 'TEXT' | 'SAVE_IMS' | 'PUB_DATA_IMG' | 'DELETE_IMS' | 'UPDATE_IMS' | 'SAVE_CONFIG' | 'RELOAD';
 
 declare type WsMsg = {
   cmd: WsCmdType,
