@@ -1,6 +1,9 @@
 import { html } from '@symbiotejs/symbiote';
 import { icon } from '../../icon.js';
+import { configs } from '../../../node/CFG.js';
 export { BackBtn } from '../cit-back-btn/back-btn.js';
+
+let collectionOptions = configs.map((c, i) => `<option value="${i}">${c.name || 'Collection ' + i}</option>`).join('');
 
 export const CIT_UI_TPL = html`
 <link 
@@ -22,6 +25,11 @@ export const CIT_UI_TPL = html`
 
 <div>
   <div viewport ref="viewport">
+    <div collection-bar ${{'@hidden': '!multiMode'}}>
+      <select ${{onchange: 'onCollectionChange'}} collection-select>
+        ${collectionOptions}
+      </select>
+    </div>
     <cit-tabs write-to="APP/uiCtx">
       <button tab="images" style="--tab-color: var(--color-accent);">${icon('imagesmode')}Images</button>
       <button tab="ims" style="--tab-color: #00c3ffff;">${icon('animated_images')}IMS Widgets</button>

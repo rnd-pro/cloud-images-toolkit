@@ -1,23 +1,28 @@
 import fs from 'fs';
-import CFG, { cdnConnector } from './CFG.js';
+import { configs, connectors } from './CFG.js';
 import { getAspectRatio } from '../iso/getAspectRatio.js';
 import imageSize from 'image-size';
 import { fillTpl } from '../iso/fillTpl.js';
 
-const imgTypes = CFG.imgTypes.length ? CFG.imgTypes : [
-  'png',
-  'jpg',
-  'jpeg',
-  'webp',
-  'gif',
-  'svg',
-];
+const DEFAULT_IMG_TYPES = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'];
 
-function getImgCloudData() {
+/**
+ * @param {CITConfig} cfg
+ * @returns {string[]}
+ */
+function getImgTypes(cfg) {
+  return cfg.imgTypes?.length ? cfg.imgTypes : DEFAULT_IMG_TYPES;
+}
+
+/**
+ * @param {string} syncDataPath
+ * @returns {Object<string, CloudImageDescriptor>}
+ */
+function getImgCloudData(syncDataPath) {
   /** @type {Object<string, CloudImageDescriptor>} */
   let imgCloudData = {};
-  if (fs.existsSync(CFG.syncDataPath)) {
-    imgCloudData = JSON.parse(fs.readFileSync(CFG.syncDataPath).toString());
+  if (fs.existsSync(syncDataPath)) {
+    imgCloudData = JSON.parse(fs.readFileSync(syncDataPath).toString());
   }
   return imgCloudData;
 }
@@ -29,7 +34,12 @@ export function checkDir(fullPath) {
   }
 }
 
-function findAllImages(initFolderPath) {
+/**
+ * @param {string} initFolderPath
+ * @param {string[]} imgTypes
+ * @returns {string[]}
+ */
+function findAllImages(initFolderPath, imgTypes) {
   /** @type {String[]} */
   let result = [];
     
@@ -65,17 +75,22 @@ let waitFor = (ms) => {
   });
 };
 
-let retries = 3;
-async function processSrcFolder(folderPath) {
-  let imgCloudData = getImgCloudData();
-  let images = findAllImages(folderPath);
+/**
+ * @param {string} folderPath
+ * @param {CITConfig} cfg
+ * @param {CdnConnector | null} connector
+ * @param {{ retries: number }} state
+ */
+async function processSrcFolder(folderPath, cfg, connector, state) {
+  let imgCloudData = getImgCloudData(cfg.syncDataPath);
+  let images = findAllImages(folderPath, getImgTypes(cfg));
   let hasErrors = false;
 
   for (let imgPath of images) {
     if (imgCloudData[imgPath]) {
       continue;
     }
-    console.log('Uploading image: ', imgPath);
+    console.log(`[${cfg.name}] Uploading image: `, imgPath);
 
     try {
       let imgBytes = fs.readFileSync(imgPath);
@@ -85,19 +100,19 @@ async function processSrcFolder(folderPath) {
       /** @type {CdnUploadResult} */
       let uploadResult;
 
-      if (cdnConnector) {
-        uploadResult = await cdnConnector.upload(imgBytes, fileName, CFG);
+      if (connector) {
+        uploadResult = await connector.upload(imgBytes, fileName, cfg);
       } else {
         let formData = new FormData();
         formData.append('file', new File([imgBytes], fileName));
         formData.append('metadata', JSON.stringify({ localPath: imgPath }));
-        let uploadUrl = fillTpl(CFG.uploadUrlTemplate, {
-          PROJECT: CFG.projectId,
+        let uploadUrl = fillTpl(cfg.uploadUrlTemplate, {
+          PROJECT: cfg.projectId,
         });
         let response = await (await fetch(uploadUrl, {
           method: 'POST',
           headers: {
-            'Authorization': `Bearer ${CFG.apiKey}`,
+            'Authorization': `Bearer ${cfg.apiKey}`,
           },
           body: formData,
         })).json();
@@ -120,50 +135,64 @@ async function processSrcFolder(folderPath) {
         srcFormat: imgPath.split('.').pop().toUpperCase(),
       };
       imgCloudData[imgPath] = imgDesc;
-      checkDir(CFG.syncDataPath);
-      fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
+      checkDir(cfg.syncDataPath);
+      fs.writeFileSync(cfg.syncDataPath, JSON.stringify(imgCloudData, null, 2));
     } catch (error) {
-      console.error(`Error uploading image "${imgPath}":`, error.message || error);
+      console.error(`[${cfg.name}] Error uploading image "${imgPath}":`, error.message || error);
       hasErrors = true;
     }
   }
 
-  if (hasErrors && retries > 0) {
-    retries--;
+  if (hasErrors && state.retries > 0) {
+    state.retries--;
     await waitFor(2000);
-    await processSrcFolder(folderPath);
+    await processSrcFolder(folderPath, cfg, connector, state);
   } else {
-    retries = 3;
-    console.log(hasErrors ? 'Uploading finished with errors' : 'Uploading finished successfully');
+    state.retries = 3;
+    console.log(`[${cfg.name}] ${hasErrors ? 'Uploading finished with errors' : 'Uploading finished successfully'}`);
   }
 }
 
-let watchTimeout;
-
 export class FolderSync {
 
+  /**
+   * Starts folder sync for all configured collections.
+   */
+  static startAll() {
+    for (let i = 0; i < configs.length; i++) {
+      let cfg = configs[i];
+      let connector = connectors[i];
+      let state = { retries: 3 };
+
+      processSrcFolder(cfg.imgSrcFolder, cfg, connector, state);
+
+      fs.watch(cfg.imgSrcFolder, {
+        recursive: true,
+      }, () => {
+        clearTimeout(state._watchTimeout);
+        state._watchTimeout = setTimeout(() => {
+          state.retries = 3;
+          processSrcFolder(cfg.imgSrcFolder, cfg, connector, state);
+        }, 1000);
+      });
+    }
+  }
+
+  /** @deprecated Use startAll() */
   static start() {
-    processSrcFolder(CFG.imgSrcFolder);
-    
-    fs.watch(CFG.imgSrcFolder, {
-      recursive: true,
-    }, (eventType, fileName) => {
-      clearTimeout(watchTimeout);
-      watchTimeout = setTimeout(() => {
-        processSrcFolder(CFG.imgSrcFolder);
-      }, 1000);
-    });
+    FolderSync.startAll();
   }
 
   /**
+   * @param {string} syncDataPath
    * @param {Object<string, CloudImageDescriptor>} imgCloudData 
    * @returns {Promise<void>}
    */
-  static writeSyncData(imgCloudData) {
+  static writeSyncData(syncDataPath, imgCloudData) {
     return new Promise((resolve, reject) => {
       try {
-        checkDir(CFG.syncDataPath);
-        fs.writeFileSync(CFG.syncDataPath, JSON.stringify(imgCloudData, null, 2));
+        checkDir(syncDataPath);
+        fs.writeFileSync(syncDataPath, JSON.stringify(imgCloudData, null, 2));
         resolve();
       } catch (error) {
         console.error('Error writing sync data:', error.message || error);
@@ -174,9 +203,12 @@ export class FolderSync {
 
   /**
    * @param {string[]} selection
+   * @param {number} [collectionIndex=0]
    */
-  static async fetch(selection) {
-    let imgCloudData = getImgCloudData();
+  static async fetch(selection, collectionIndex = 0) {
+    let cfg = configs[collectionIndex];
+    let connector = connectors[collectionIndex];
+    let imgCloudData = getImgCloudData(cfg.syncDataPath);
     let promises = [];
     for (let imgPath of selection) {
       if (imgCloudData[imgPath] && !fs.existsSync(imgPath)) {
@@ -184,16 +216,16 @@ export class FolderSync {
           try {
             /** @type {ArrayBuffer} */
             let imgBytes;
-            if (cdnConnector) {
-              imgBytes = await cdnConnector.fetchBlob(imgCloudData[imgPath].cdnId, CFG);
+            if (connector) {
+              imgBytes = await connector.fetchBlob(imgCloudData[imgPath].cdnId, cfg);
             } else {
-              imgBytes = await (await fetch(fillTpl(CFG.fetchUrlTemplate, {
+              imgBytes = await (await fetch(fillTpl(cfg.fetchUrlTemplate, {
                 UID: imgCloudData[imgPath].cdnId,
-                PROJECT: CFG.projectId,
+                PROJECT: cfg.projectId,
               }), {
                 method: 'GET',
                 headers: {
-                  'Authorization': `Bearer ${CFG.apiKey}`,
+                  'Authorization': `Bearer ${cfg.apiKey}`,
                 },
               })).arrayBuffer();
             }
@@ -202,7 +234,7 @@ export class FolderSync {
               encoding: 'binary',
             });
           } catch (error) {
-            console.error(`Error fetching image "${imgPath}":`, error.message || error);
+            console.error(`[${cfg.name}] Error fetching image "${imgPath}":`, error.message || error);
           }
         })();
         promises.push(p);
@@ -213,24 +245,27 @@ export class FolderSync {
 
   /**
    * @param {string[]} selection
+   * @param {number} [collectionIndex=0]
    */
-  static async remove(selection) {
-    let imgCloudData = getImgCloudData();
+  static async remove(selection, collectionIndex = 0) {
+    let cfg = configs[collectionIndex];
+    let connector = connectors[collectionIndex];
+    let imgCloudData = getImgCloudData(cfg.syncDataPath);
     let promises = [];
     for (let imgPath of selection) {
       if (imgCloudData[imgPath]) {
         let p = (async () => {
           try {
-            if (cdnConnector) {
-              await cdnConnector.remove(imgCloudData[imgPath].cdnId, CFG);
+            if (connector) {
+              await connector.remove(imgCloudData[imgPath].cdnId, cfg);
             } else {
-              await fetch(fillTpl(CFG.removeUrlTemplate, {
+              await fetch(fillTpl(cfg.removeUrlTemplate, {
                 UID: imgCloudData[imgPath].cdnId,
-                PROJECT: CFG.projectId,
+                PROJECT: cfg.projectId,
               }), {
                 method: 'DELETE',
                 headers: {
-                  'Authorization': `Bearer ${CFG.apiKey}`,
+                  'Authorization': `Bearer ${cfg.apiKey}`,
                 },
               });
             }
@@ -238,9 +273,9 @@ export class FolderSync {
             if (fs.existsSync(imgPath)) {
               fs.unlinkSync(imgPath);
             }
-            await this.writeSyncData(imgCloudData);
+            await FolderSync.writeSyncData(cfg.syncDataPath, imgCloudData);
           } catch (error) {
-            console.error(`Error deleting image "${imgPath}":`, error.message || error);
+            console.error(`[${cfg.name}] Error deleting image "${imgPath}":`, error.message || error);
           }
         })();
         promises.push(p);

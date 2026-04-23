@@ -1,4 +1,5 @@
 {
+  "name": "My Project",
   "cdn": "cloudflare",
   "syncDataPath": "./cit-sync-data.json",
   "imsDataFolder": "./ims-widgets/",
@@ -13,7 +14,5 @@
   "removeUrlTemplate": "https://api.cloudflare.com/client/v4/accounts/{PROJECT}/images/v1/{UID}",
   "imsUrlTemplate": "https://<YOUR_DOMAIN>/ims/{HASH}.json",
   "variants": ["120", "320", "640", "860", "1024", "1200", "2048", "max"],
-  "imgTypes": ["png", "jpg", "jpeg", "webp", "gif", "svg"],
-  "wsPort": 8080,
-  "httpPort": 8081
+  "imgTypes": ["png", "jpg", "jpeg", "webp", "gif", "svg"]
 }

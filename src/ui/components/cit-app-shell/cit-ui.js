@@ -7,7 +7,7 @@ import { CIT_UI_CSS } from './css.js';
 import { CIT_UI_TPL } from './tpl.js';
 
 import { getImgCode } from '../../../iso/getImgCode.js';
-import { CFG } from '../../../node/CFG.js';
+import { CFG, configs } from '../../../node/CFG.js';
 import { fillTpl } from '../../../iso/fillTpl.js';
 import { WsClient } from '../../WsClient.js';
 import { sortBySubNumber } from '../../../iso/sortBySubNumber.js';
@@ -55,6 +55,12 @@ class CitUi extends Symbiote {
     wsStatus: 'connecting',
     wsStatusIcon: 'sync',
     wsStatusColor: 'var(--color-4)',
+    activeCollectionIndex: 0,
+    multiMode: configs.length > 1,
+
+    onCollectionChange: (e) => {
+      this.$.activeCollectionIndex = parseInt(e.target.value, 10);
+    },
     
     onFilter: (e) => {
       if (this.#filterTimeout) {  
@@ -137,7 +143,8 @@ class CitUi extends Symbiote {
     onVariantClick: (e) => {
       let variant = e.target.getAttribute('variant');
       if (variant) {
-        window.open(fillTpl(CFG.imgUrlTemplate, {
+        let activeCfg = configs[this.$.activeCollectionIndex] || CFG;
+        window.open(fillTpl(activeCfg.imgUrlTemplate, {
           UID: this.$.current.$.cdnId,
           VARIANT: variant,
         }), '_blank');
@@ -155,7 +162,7 @@ class CitUi extends Symbiote {
         for (let hash of this.$.selection) {
           await WsClient.send({
             cmd: 'DELETE_IMS',
-            data: hash,
+            data: { hash, collectionIndex: this.$.activeCollectionIndex },
           });
         }
         this.loadImsData();
@@ -177,7 +184,7 @@ class CitUi extends Symbiote {
         this.$.message = `Removing ${this.$.selection.length} image${this.$.selection.length > 1 ? 's' : ''}...`;
         await WsClient.send({
           cmd: 'REMOVE',
-          data: this.$.selection,
+          data: { selection: this.$.selection, collectionIndex: this.$.activeCollectionIndex },
         });
       }
     },
@@ -187,7 +194,7 @@ class CitUi extends Symbiote {
       this.$.message = `Fetching remote images...`;
       await WsClient.send({
         cmd: 'FETCH',
-        data: this.$.selection,
+        data: { selection: this.$.selection, collectionIndex: this.$.activeCollectionIndex },
       });
     },
 
@@ -233,7 +240,7 @@ class CitUi extends Symbiote {
       if (Object.keys(update).length > 0) {
         await WsClient.send({
           cmd: 'EDIT',
-          data: update,
+          data: { update, collectionIndex: this.$.activeCollectionIndex },
         });
         this.notify('filesRenderData');
       }
@@ -272,8 +279,9 @@ class CitUi extends Symbiote {
       if (!val) {
         return;
       }
+      let activeCfg = configs[this.$.activeCollectionIndex] || CFG;
       if (val.$.cdnId && !val.$.imsType) {
-        this.$.embedCode = getImgCode(val.$.cdnId, CFG.variants, val.$.alt);
+        this.$.embedCode = getImgCode(val.$.cdnId, activeCfg.variants, val.$.alt);
       }
     });
 
@@ -286,8 +294,9 @@ class CitUi extends Symbiote {
     });
     
     const applyFilters = async () => {
-      let cloudImagesData = await getCloudImagesData();
-      let rData = getFilesAndFolders(cloudImagesData, CFG.imgSrcFolder, this.$.filterSubstr, this.$.tagFilterSubstr); 
+      let activeCfg = configs[this.$.activeCollectionIndex] || CFG;
+      let cloudImagesData = await getCloudImagesData(this.$.activeCollectionIndex);
+      let rData = getFilesAndFolders(cloudImagesData, activeCfg.imgSrcFolder, this.$.filterSubstr, this.$.tagFilterSubstr); 
       this.$.filesRenderData = rData.files;
       this.$.foldersRenderData = rData.folders;
       this.$.hasItems = Object.keys(rData.files).length > 0 || Object.keys(rData.folders).length > 0;
@@ -301,6 +310,7 @@ class CitUi extends Symbiote {
     
     this.sub('filterSubstr', applyFilters);
     this.sub('tagFilterSubstr', applyFilters);
+    this.sub('activeCollectionIndex', applyFilters);
     this.sub('selection', (val) => {
       this.$.selectionSize = val.length;
       this.$.hasSelection = val.length > 0;
@@ -363,7 +373,7 @@ class CitUi extends Symbiote {
   
   async loadImsData() {
     this.$.isLoading = true;
-    let data = await getImsData();
+    let data = await getImsData(this.$.activeCollectionIndex);
     let renderData = {};
     for (let hash in data) {
       let previewUrl = '';

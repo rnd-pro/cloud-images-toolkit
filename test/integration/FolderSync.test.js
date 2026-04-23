@@ -94,7 +94,7 @@ console.log(JSON.stringify({ exists: fs.existsSync('${dirPath}') }));
     let result = runTestScript('test-writesync', `
 import FolderSync from '${FOLDERSYNC_URL}';
 import fs from 'fs';
-await FolderSync.writeSyncData(${JSON.stringify(testData)});
+await FolderSync.writeSyncData('${syncDataPath}', ${JSON.stringify(testData)});
 let written = JSON.parse(fs.readFileSync('${syncDataPath}', 'utf8'));
 console.log(JSON.stringify({
   ok: !!written['./store/test.png'],
@@ -109,16 +109,12 @@ console.log(JSON.stringify({
   it('writeSyncData rejects on write failure', () => {
     let result = runTestScript('test-writefail', `
 import FolderSync from '${FOLDERSYNC_URL}';
-import CFG from '${CFG_URL}';
-let origPath = CFG.syncDataPath;
-CFG.syncDataPath = '/nonexistent/readonly/path/data.json';
 try {
-  await FolderSync.writeSyncData({});
+  await FolderSync.writeSyncData('/nonexistent/readonly/path/data.json', {});
   console.log(JSON.stringify({ rejected: false }));
 } catch (e) {
   console.log(JSON.stringify({ rejected: true }));
 }
-CFG.syncDataPath = origPath;
 `);
     let parsed = JSON.parse(result.trim());
     assert.equal(parsed.rejected, true);

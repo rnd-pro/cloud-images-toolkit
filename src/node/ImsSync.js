@@ -1,20 +1,26 @@
 import fs from 'fs';
-import CFG from './CFG.js';
+import { configs } from './CFG.js';
 import { checkDir } from './FolderSync.js';
 
-let watchTimeout;
+/** @type {Record<string, ReturnType<typeof setTimeout>>} */
+let watchTimeouts = {};
 
 export class ImsSync {
 
-  static getList() {
+  /**
+   * @param {number} [collectionIndex=0]
+   * @returns {Object<string, any>}
+   */
+  static getList(collectionIndex = 0) {
+    let cfg = configs[collectionIndex];
     let result = {};
-    if (!CFG.imsDataFolder || !fs.existsSync(CFG.imsDataFolder)) {
+    if (!cfg?.imsDataFolder || !fs.existsSync(cfg.imsDataFolder)) {
       return result;
     }
     
-    let files = fs.readdirSync(CFG.imsDataFolder);
+    let files = fs.readdirSync(cfg.imsDataFolder);
     files.forEach(file => {
-      const fullPath = `${CFG.imsDataFolder}/${file}`.replaceAll('//', '/');
+      const fullPath = `${cfg.imsDataFolder}/${file}`.replaceAll('//', '/');
       const stat = fs.lstatSync(fullPath);
       
       if (stat.isFile() && file.endsWith('.json')) {
@@ -31,38 +37,69 @@ export class ImsSync {
     return result;
   }
 
-  static start(onUpdateCallback) {
-    if (!CFG.imsDataFolder) return;
-    if (!fs.existsSync(CFG.imsDataFolder)) {
-      checkDir(CFG.imsDataFolder + '/tmp.json'); // small trick to create dir
-    }
+  /**
+   * Starts IMS watchers for all collections.
+   * Deduplicates shared folders to avoid double-watching.
+   * @param {Function} onUpdateCallback
+   */
+  static startAll(onUpdateCallback) {
+    /** @type {Set<string>} */
+    let watchedFolders = new Set();
 
-    fs.watch(CFG.imsDataFolder, {
-      recursive: false,
-    }, (eventType, fileName) => {
-      if (fileName && fileName.endsWith('.json')) {
-        clearTimeout(watchTimeout);
-        watchTimeout = setTimeout(() => {
-          if (onUpdateCallback) onUpdateCallback();
-        }, 300);
+    for (let cfg of configs) {
+      if (!cfg.imsDataFolder) continue;
+
+      if (!fs.existsSync(cfg.imsDataFolder)) {
+        checkDir(cfg.imsDataFolder + '/tmp.json');
       }
-    });
+
+      let folder = cfg.imsDataFolder;
+      if (watchedFolders.has(folder)) continue;
+      watchedFolders.add(folder);
+
+      fs.watch(folder, {
+        recursive: false,
+      }, (eventType, fileName) => {
+        if (fileName && fileName.endsWith('.json')) {
+          clearTimeout(watchTimeouts[folder]);
+          watchTimeouts[folder] = setTimeout(() => {
+            if (onUpdateCallback) onUpdateCallback();
+          }, 300);
+        }
+      });
+    }
   }
 
-  static save(hash, data) {
-    if (!CFG.imsDataFolder) return;
-    checkDir(CFG.imsDataFolder + '/tmp.json');
-    let path = `${CFG.imsDataFolder}/${hash}.json`.replaceAll('//', '/');
-    let jsonStr = CFG.imsDataMinify === false ? JSON.stringify(data, null, 2) : JSON.stringify(data);
+  /** @deprecated Use startAll() */
+  static start(onUpdateCallback) {
+    ImsSync.startAll(onUpdateCallback);
+  }
+
+  /**
+   * @param {string} hash
+   * @param {any} data
+   * @param {number} [collectionIndex=0]
+   */
+  static save(hash, data, collectionIndex = 0) {
+    let cfg = configs[collectionIndex];
+    if (!cfg?.imsDataFolder) return;
+    checkDir(cfg.imsDataFolder + '/tmp.json');
+    let path = `${cfg.imsDataFolder}/${hash}.json`.replaceAll('//', '/');
+    let jsonStr = cfg.imsDataMinify === false ? JSON.stringify(data, null, 2) : JSON.stringify(data);
     fs.writeFileSync(path, jsonStr);
   }
 
-  static delete(hash) {
-    if (!CFG.imsDataFolder || !fs.existsSync(CFG.imsDataFolder)) return;
-    let files = fs.readdirSync(CFG.imsDataFolder);
+  /**
+   * @param {string} hash
+   * @param {number} [collectionIndex=0]
+   */
+  static delete(hash, collectionIndex = 0) {
+    let cfg = configs[collectionIndex];
+    if (!cfg?.imsDataFolder || !fs.existsSync(cfg.imsDataFolder)) return;
+    let files = fs.readdirSync(cfg.imsDataFolder);
     files.forEach(file => {
       if (file.startsWith(hash) && file.endsWith('.json')) {
-        let fullPath = `${CFG.imsDataFolder}/${file}`.replaceAll('//', '/');
+        let fullPath = `${cfg.imsDataFolder}/${file}`.replaceAll('//', '/');
         fs.unlinkSync(fullPath);
       }
     });

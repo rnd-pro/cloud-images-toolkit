@@ -1,5 +1,5 @@
 import Symbiote, { html, css } from '@symbiotejs/symbiote';
-import { CFG } from '../../../node/CFG.js';
+import { CFG, configs } from '../../../node/CFG.js';
 import { fillTpl } from '../../../iso/fillTpl.js';
 import { getVariantsNum } from '../../../iso/getVariantsNum.js';
 
@@ -16,8 +16,9 @@ export default class ImgItem extends Symbiote {
    * @returns 
    */
   #getImgUrl(isPreview = false) {
-    let variants = getVariantsNum(CFG.variants);
-    return fillTpl(CFG.previewUrlTemplate || CFG.imgUrlTemplate, {
+    let activeCfg = configs[this.$['^activeCollectionIndex']] || CFG;
+    let variants = getVariantsNum(activeCfg.variants);
+    return fillTpl(activeCfg.previewUrlTemplate || activeCfg.imgUrlTemplate, {
       UID: this.$.cdnId,
       VARIANT: isPreview ? variants[0] : variants[variants.length - 1],
     });

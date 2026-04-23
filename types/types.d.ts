@@ -27,6 +27,7 @@ declare type CdnConnector = {
 };
 
 declare type CITConfig = {
+  name?: string,
   cdn?: CdnType,
   syncDataPath: string,
   imsDataPath: string,
@@ -34,6 +35,7 @@ declare type CITConfig = {
   imsDataMinify?: boolean,
   imgSrcFolder: string,
   apiKey: string,
+  apiKeyPath?: string,
   projectId?: string,
   imgUrlTemplate?: string,
   previewUrlTemplate?: string,
@@ -43,9 +45,11 @@ declare type CITConfig = {
   imsUrlTemplate?: string,
   variants: string[],
   imgTypes: string[],
-  wsPort: number,
-  httpPort: number,
+  wsPort?: number,
+  httpPort?: number,
 };
+
+declare type CITRawConfig = CITConfig | CITConfig[];
 
 declare type WsCmdType = 'HELLO' | 'FETCH' | 'REMOVE' | 'UPDATE' | 'EDIT' | 'TEXT' | 'SAVE_IMS' | 'PUB_DATA_IMG' | 'DELETE_IMS' | 'UPDATE_IMS';
 
@@ -59,5 +63,6 @@ declare type WsMsgData = {
   imgData?: string,
   hash?: string,
   srcData?: any,
+  collectionIndex?: number,
 }
 

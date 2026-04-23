@@ -1,7 +1,7 @@
 import Symbiote from '@symbiotejs/symbiote';
 import { IMS_COMPOSER_CSS } from './css.js';
 import { IMS_COMPOSER_TPL } from './tpl.js';
-import { CFG } from '../../../node/CFG.js';
+import { CFG, configs } from '../../../node/CFG.js';
 export { ImsViewer } from 'immersive-media-spots/wgt/viewer';
 import { ImsDiffData } from 'immersive-media-spots/wgt/diff/ImsDiffData.js';
 import { ImsGalleryData } from 'immersive-media-spots/wgt/gallery/ImsGalleryData.js';
@@ -97,6 +97,7 @@ export class ImsComposer extends Symbiote {
         data: {
           hash: this.$.currentHash,
           srcData: this.srcData,
+          collectionIndex: this.$['^activeCollectionIndex'],
         },
       });
       this.$['^message'] = 'Saving...';
@@ -134,6 +135,7 @@ export class ImsComposer extends Symbiote {
         data: {
           localPath: this.$.srcDataImageLocalPath,
           imgData: this.$.dataImageSrc,
+          collectionIndex: this.$['^activeCollectionIndex'],
         },
       });
       this.$['^message'] = 'Publishing to CDN...';
@@ -148,7 +150,8 @@ export class ImsComposer extends Symbiote {
   }
 
   get htmlEmbedCode() {
-    let url = CFG.imsUrlTemplate ? CFG.imsUrlTemplate.replace('{HASH}', this.$.currentHash) : this.$.imsDataUrl;
+    let activeCfg = configs[this.$['^activeCollectionIndex']] || CFG;
+    let url = activeCfg.imsUrlTemplate ? activeCfg.imsUrlTemplate.replace('{HASH}', this.$.currentHash) : this.$.imsDataUrl;
     let tag = this.$.useCommonViewer ? 'ims-viewer' : `ims-${this.$.imsType}`;
     return /*html*/ `<${tag} src-data="${url}"></${tag}>`;
   }
@@ -162,8 +165,9 @@ export class ImsComposer extends Symbiote {
     this.$.currentHash = await getHash(srcDataString);
     this.$.htmlCode = this.htmlEmbedCode;
     this.$.ableToSave = !this.$.savedHashes.includes(this.$.currentHash);
+    let activeCfg = configs[this.$['^activeCollectionIndex']] || CFG;
     if (!this.$.srcDataImageLocalPath || this.$.ableToSave) {
-      this.$.srcDataImageLocalPath = `${CFG.imgSrcFolder}ims-data-images/${srcData.imsType}_v${srcData.version}/${(new Date()).toISOString().split('T')[0] + '_' + this.$.currentHash.slice(0, 5)}.png`;
+      this.$.srcDataImageLocalPath = `${activeCfg.imgSrcFolder}ims-data-images/${srcData.imsType}_v${srcData.version}/${(new Date()).toISOString().split('T')[0] + '_' + this.$.currentHash.slice(0, 5)}.png`;
     }
   }
 
@@ -195,18 +199,20 @@ export class ImsComposer extends Symbiote {
       let typeData = typeMap[val];
       let srcData = new typeData();
 
+      let activeCfg = configs[this.$['^activeCollectionIndex']] || CFG;
+
       if (Object.hasOwn(srcData, 'urlTemplate')) {
-        srcData.urlTemplate = CFG.imgUrlTemplate;
+        srcData.urlTemplate = activeCfg.imgUrlTemplate;
       }
 
       if (Object.hasOwn(srcData, 'variants')) {
-        srcData.variants = CFG.variants.filter((vnt) => {
+        srcData.variants = activeCfg.variants.filter((vnt) => {
           return !Number.isNaN(parseFloat(vnt));
         });
       }
 
       if (Object.hasOwn(srcData, 'cdnIdList')) {
-        let imgData = await getCloudImagesData();
+        let imgData = await getCloudImagesData(this.$['^activeCollectionIndex']);
         for (let uid of selection) {
           if (imgData[uid] && imgData[uid].cdnId) {
             srcData.cdnIdList.push(imgData[uid].cdnId);

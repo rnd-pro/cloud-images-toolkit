@@ -94,6 +94,7 @@ Create a `cit-config.json` file in your project root. A reference template is in
 
 ```json
 {
+  "name": "My Collection",
   "cdn": "cloudflare",
   "syncDataPath": "./cit-sync-data.json",
   "imsDataFolder": "./ims-widgets/",
@@ -110,6 +111,10 @@ Create a `cit-config.json` file in your project root. A reference template is in
   "httpPort": 8081
 }
 ```
+
+### Multi-Collection Support
+
+CIT supports managing multiple collections simultaneously. Instead of a single object, you can configure `cit-config.json` as an array of collection objects. Each collection will operate independently with its own CDN settings, keys, and paths. A reference for this format can be found in [`cit-config_MULTI_REFERENCE.json`](./cit-config_MULTI_REFERENCE.json).
 
 When the `cdn` field is set, CIT uses a built-in connector that auto-fills upload, fetch, and remove URL templates with provider-specific defaults. You can still override any template manually.
 
@@ -212,7 +217,7 @@ CIT looks for `cit-config.json` in the current working directory. Make sure you'
 Ensure your API key file path in `cit-config.json` points to a valid file. The file format depends on your CDN connector — see the [CDN Connectors](#cdn-connectors) section for details.
 
 ### Port conflicts
-If ports `8080` or `8081` are in use, update `wsPort` and `httpPort` in your config file.
+If manually pre-configured ports (like `8080` or `8081`) are already in use by other applications, update `wsPort` and `httpPort` in your config file to use different ports. Alternatively, you can omit these properties from your configuration, and CIT will automatically discover and bind to available network ports.
 
 ### Upload failures
 CIT automatically retries failed uploads up to 3 times. Check your API key and network connection if uploads consistently fail.

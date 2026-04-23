@@ -237,6 +237,32 @@ cit-ui {
         animation: spin 2s linear infinite;
       }
     }
+
+    [collection-bar] {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px 0;
+
+      &[hidden] {
+        display: none;
+      }
+
+      [collection-select] {
+        flex-grow: 1;
+        height: 36px;
+        font-size: 14px;
+        font-weight: 500;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 6px;
+        cursor: pointer;
+        transition: 0.2s;
+
+        &:hover {
+          background-color: rgba(255, 255, 255, 0.15);
+        }
+      }
+    }
   }
 
 
