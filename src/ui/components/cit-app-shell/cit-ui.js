@@ -353,6 +353,54 @@ class CitUi extends Symbiote {
 
     WsClient.connect().catch(() => {});
 
+    // Drag and drop for image uploads
+    let dz = this.ref.dropzone;
+    
+    dz.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dz.setAttribute('drag-over', '');
+    });
+
+    dz.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      dz.removeAttribute('drag-over');
+    });
+
+    dz.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dz.removeAttribute('drag-over');
+      
+      if (this.$['APP/uiCtx'] !== 'images') return;
+
+      let files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+      if (!files.length) return;
+      
+      let activeCfg = configs[this.$['APP/collectionIndex']] || CFG;
+      let targetFolder = activeCfg.imgSrcFolder;
+      if (!targetFolder.endsWith('/')) targetFolder += '/';
+      
+      this.$.isLoading = true;
+      this.$.message = `Uploading ${files.length} image${s(files)}...`;
+      
+      let uploads = files.map(file => {
+        return new Promise((resolve) => {
+          let reader = new FileReader();
+          reader.onload = async (e) => {
+            let imgData = e.target.result;
+            let localPath = targetFolder + this.$.filterSubstr + file.name;
+            await WsClient.send({
+              cmd: 'PUB_DATA_IMG',
+              data: { localPath, imgData, collectionIndex: this.$['APP/collectionIndex'] }
+            });
+            resolve();
+          };
+          reader.readAsDataURL(file);
+        });
+      });
+      
+      Promise.all(uploads);
+    });
+
     // Handle global keyboard shortcuts
     window.addEventListener('keydown', (e) => {
       // Don't intercept if user is typing in an input or contenteditable

@@ -238,6 +238,16 @@ cit-ui {
       }
     }
 
+    [dropzone] {
+      min-height: calc(100% - 44px);
+      &[drag-over] {
+        opacity: 0.7;
+        background: rgba(0, 255, 255, 0.1);
+        outline: 2px dashed var(--color-accent);
+        outline-offset: -10px;
+      }
+    }
+
     [collection-bar] {
       display: flex;
       align-items: center;

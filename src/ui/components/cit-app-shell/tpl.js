@@ -22,70 +22,72 @@ export const CIT_UI_TPL = html`
       <button tab="ai">${icon('robot')}AI Tools</button>
     </cit-tabs>
 
-    <cit-ui-ctx read-from="APP/uiCtx">
+    <div dropzone ref="dropzone">
+      <cit-ui-ctx read-from="APP/uiCtx">
 
-      <div ui-ctx="images" ref="tiles_wrapper">
-        <div loader ${{'@hidden': '!isLoading'}}>
-          ${icon('cloud_sync')}
+        <div ui-ctx="images" ref="tiles_wrapper">
+          <div loader ${{'@hidden': '!isLoading'}}>
+            ${icon('cloud_sync')}
+          </div>
+          <div empty-state ${{'@hidden': 'hasItems'}}>
+            ${icon('photo_library')}
+            <div title>No images yet...</div>
+            <div sub>Put images to the configured local folder to see them here</div>
+          </div>
+          <div tiles ${{'@hidden': '!hasItems'}}>
+            <cit-back-btn></cit-back-btn>
+            <div 
+              itemize="foldersRenderData" 
+              item-tag="cit-folder-item" 
+              itemize-container></div>
+            <div 
+              itemize="filesRenderData" 
+              item-tag="cit-img-item" 
+              itemize-container></div>
+          </div>
         </div>
-        <div empty-state ${{'@hidden': 'hasItems'}}>
-          ${icon('photo_library')}
-          <div title>No images yet...</div>
-          <div sub>Put images to the configured local folder to see them here</div>
-        </div>
-        <div tiles ${{'@hidden': '!hasItems'}}>
-          <cit-back-btn></cit-back-btn>
-          <div 
-            itemize="foldersRenderData" 
-            item-tag="cit-folder-item" 
-            itemize-container></div>
-          <div 
-            itemize="filesRenderData" 
-            item-tag="cit-img-item" 
-            itemize-container></div>
-        </div>
-      </div>
 
-      <div ui-ctx="ims" ref="ims_wrapper">
-        <div empty-state ${{'@hidden': 'hasImsItems'}}>
-          ${icon('animated_images')}
-          <div title>No IMS widgets found</div>
-          <div sub>Save widgets from the composer to see them here</div>
+        <div ui-ctx="ims" ref="ims_wrapper">
+          <div empty-state ${{'@hidden': 'hasImsItems'}}>
+            ${icon('animated_images')}
+            <div title>No IMS widgets found</div>
+            <div sub>Save widgets from the composer to see them here</div>
+          </div>
+          <div tiles ${{'@hidden': '!hasImsItems'}}>
+            <div 
+              itemize="imsRenderData" 
+              item-tag="cit-ims-item" 
+              itemize-container></div>
+          </div>
         </div>
-        <div tiles ${{'@hidden': '!hasImsItems'}}>
-          <div 
-            itemize="imsRenderData" 
-            item-tag="cit-ims-item" 
-            itemize-container></div>
-        </div>
-      </div>
 
-      <div ui-ctx="stories" tiles>
-        <div empty-state>
-          ${icon('auto_stories')}
-          <div title>IMS Stories</div>
-          <div sub>Coming soon...</div>
-          <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
+        <div ui-ctx="stories" tiles>
+          <div empty-state>
+            ${icon('auto_stories')}
+            <div title>IMS Stories</div>
+            <div sub>Coming soon...</div>
+            <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
+          </div>
         </div>
-      </div>
-      <div ui-ctx="video" tiles>
-        <div empty-state>
-          ${icon('play_circle')}
-          <div title>Video</div>
-          <div sub>Coming soon...</div>
-          <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
+        <div ui-ctx="video" tiles>
+          <div empty-state>
+            ${icon('play_circle')}
+            <div title>Video</div>
+            <div sub>Coming soon...</div>
+            <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
+          </div>
         </div>
-      </div>
-      <div ui-ctx="ai" tiles>
-        <div empty-state>
-          ${icon('robot')}
-          <div title>AI Tools</div>
-          <div sub>Coming soon...</div>
-          <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
+        <div ui-ctx="ai" tiles>
+          <div empty-state>
+            ${icon('robot')}
+            <div title>AI Tools</div>
+            <div sub>Coming soon...</div>
+            <div>Give us a star on <a target="_blank" href="https://github.com/rnd-pro/cloud-images-toolkit">GitHub</a> to see it faster.</div>
+          </div>
         </div>
-      </div>
 
-    </cit-ui-ctx>
+      </cit-ui-ctx>
+    </div>
   </div>
 </div>
 

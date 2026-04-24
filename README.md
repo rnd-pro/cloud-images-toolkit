@@ -17,7 +17,7 @@ A powerful toolkit for managing image collections directly in your codebase, wit
 - Automatic image sorting for ordered sequences
 - Adaptive image embed code generation
 - Smart local caching - download cloud images only when needed
-- Built-in image management UI application
+- Built-in image management UI application with drag-and-drop uploads
 - Interactive widget generation using [Immersive Media Spots (IMS)](https://github.com/rnd-pro/immersive-media-spots):
   - Image galleries
   - Panorama viewers
