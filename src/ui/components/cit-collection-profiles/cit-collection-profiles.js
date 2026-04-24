@@ -50,10 +50,9 @@ export class CitCollectionProfiles extends Symbiote {
         let idx = itemComponent.$.idx;
         this.$['APP/collectionIndex'] = idx;
         
-        // Update visual current state for all items
-        let domItems = this.querySelectorAll('cit-collection-item');
+        /** @type {any[]} */
+        let domItems = [...this.querySelectorAll('cit-collection-item')];
         domItems.forEach(item => {
-          // @ts-ignore
           item.$.current = item.$.idx === idx;
         });
 
