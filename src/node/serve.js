@@ -90,12 +90,8 @@ wss.on('connection', (ws) => {
     PUB_DATA_IMG: async (/** @type {WsMsgData} */ msgData) => {
       await FolderSync.saveImage(msgData.localPath, msgData.imgData);
       ws.send(JSON.stringify({
-        cmd: 'UPDATE',
-        data: null,
-      }));
-      ws.send(JSON.stringify({
         cmd: 'TEXT',
-        data: 'Source data image is uploaded!',
+        data: 'File saved locally. Uploading to CDN...',
       }));
     },
     SAVE_CONFIG: async (/** @type {WsMsgData} */ msgData) => {
@@ -237,7 +233,20 @@ httpServer.listen(ports.http, () => {
   console.log(`✅ Cloud Images Toolkit dashboard is available at http://localhost:${ports.http}`);
 });
 
-FolderSync.startAll();
+FolderSync.startAll(() => {
+  wss.clients.forEach((client) => {
+    if (client.readyState === 1) {
+      client.send(JSON.stringify({
+        cmd: 'UPDATE',
+        data: null,
+      }));
+      client.send(JSON.stringify({
+        cmd: 'TEXT',
+        data: 'Uploading finished successfully!',
+      }));
+    }
+  });
+});
 ImsSync.startAll(() => {
   wss.clients.forEach((client) => {
     if (client.readyState === 1) {

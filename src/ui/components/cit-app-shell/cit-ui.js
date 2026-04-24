@@ -328,9 +328,12 @@ class CitUi extends Symbiote {
 
     WsClient.onUpdate(async () => {
       this.$.isLoading = false;
-      this.$.message = `Processing of ${this.$.selection.length} items is done.`;
-      this.$.folderHistory = [];
-      this.$.filterSubstr = '';
+      this.$.message = `Update processed.`;
+      if (this.$['APP/uiCtx'] === 'images') {
+        applyFilters();
+      } else if (this.$['APP/uiCtx'] === 'ims') {
+        this.loadImsData();
+      }
     });
 
     WsClient.onText((text) => {

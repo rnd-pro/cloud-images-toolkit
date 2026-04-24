@@ -81,15 +81,18 @@ let waitFor = (ms) => {
  * @param {CdnConnector | null} connector
  * @param {{ retries: number }} state
  */
-async function processSrcFolder(folderPath, cfg, connector, state) {
+async function processSrcFolder(folderPath, cfg, connector, state, onUpdate) {
   let imgCloudData = getImgCloudData(cfg.syncDataPath);
   let images = findAllImages(folderPath, getImgTypes(cfg));
   let hasErrors = false;
+
+  let hasUploads = false;
 
   for (let imgPath of images) {
     if (imgCloudData[imgPath]) {
       continue;
     }
+    hasUploads = true;
     console.log(`[${cfg.name}] Uploading image: `, imgPath);
 
     try {
@@ -146,25 +149,25 @@ async function processSrcFolder(folderPath, cfg, connector, state) {
   if (hasErrors && state.retries > 0) {
     state.retries--;
     await waitFor(2000);
-    await processSrcFolder(folderPath, cfg, connector, state);
+    await processSrcFolder(folderPath, cfg, connector, state, onUpdate);
   } else {
     state.retries = 3;
-    console.log(`[${cfg.name}] ${hasErrors ? 'Uploading finished with errors' : 'Uploading finished successfully'}`);
+    if (hasUploads) {
+      console.log(`[${cfg.name}] ${hasErrors ? 'Uploading finished with errors' : 'Uploading finished successfully'}`);
+      if (onUpdate) onUpdate();
+    }
   }
 }
 
 export class FolderSync {
 
-  /**
-   * Starts folder sync for all configured collections.
-   */
-  static startAll() {
+  static startAll(onUpdate) {
     for (let i = 0; i < configs.length; i++) {
       let cfg = configs[i];
       let connector = connectors[i];
       let state = { retries: 3 };
 
-      processSrcFolder(cfg.imgSrcFolder, cfg, connector, state);
+      processSrcFolder(cfg.imgSrcFolder, cfg, connector, state, onUpdate);
 
       fs.watch(cfg.imgSrcFolder, {
         recursive: true,
@@ -172,7 +175,7 @@ export class FolderSync {
         clearTimeout(state._watchTimeout);
         state._watchTimeout = setTimeout(() => {
           state.retries = 3;
-          processSrcFolder(cfg.imgSrcFolder, cfg, connector, state);
+          processSrcFolder(cfg.imgSrcFolder, cfg, connector, state, onUpdate);
         }, 1000);
       });
     }
