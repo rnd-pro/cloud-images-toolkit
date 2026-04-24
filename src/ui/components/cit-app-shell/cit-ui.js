@@ -305,7 +305,13 @@ class CitUi extends Symbiote {
     
     this.sub('filterSubstr', applyFilters);
     this.sub('tagFilterSubstr', applyFilters);
-    this.sub('APP/collectionIndex', applyFilters);
+    this.sub('APP/collectionIndex', async () => {
+      if (this.$['APP/uiCtx'] === 'images') {
+        applyFilters();
+      } else if (this.$['APP/uiCtx'] === 'ims') {
+        this.loadImsData();
+      }
+    });
     this.sub('selection', (val) => {
       this.$.selectionSize = val.length;
       this.$.hasSelection = val.length > 0;
