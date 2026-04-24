@@ -90,13 +90,13 @@ describe('CFG', () => {
 
     let { execSync } = await import('child_process');
     let result = execSync(
-      `node -e "let m = await import('${path.resolve(__dirname, '../../src/node/CFG.js').replace(/\\/g, '/')}'); console.log(JSON.stringify({ok: true, port: m.CFG.httpPort, hasKey: !!m.CFG.apiKey, noKeyPath: !m.CFG.apiKeyPath}))"`,
+      `node -e "let m = await import('${path.resolve(__dirname, '../../src/node/CFG.js').replace(/\\/g, '/')}'); console.log(JSON.stringify({ok: true, port: m.CFG.httpPort, hasKey: !!m.CFG.apiKey, hasKeyPath: !!m.CFG.apiKeyPath}))"`,
       { cwd: TMP_DIR, encoding: 'utf8', timeout: 5000, stdio: 'pipe', input: 'n\n' }
     );
     let parsed = JSON.parse(result.trim());
     assert.equal(parsed.ok, true);
     assert.equal(parsed.port, 19081);
     assert.equal(parsed.hasKey, true);
-    assert.equal(parsed.noKeyPath, true);
+    assert.equal(parsed.hasKeyPath, true);
   });
 });
