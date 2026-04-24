@@ -84,6 +84,20 @@ cit-ui {
     }
   }
 
+  [controls] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+
+    &[grow] * {
+      flex-grow: 1;
+    }
+
+    &[column] {
+      width: 10px;
+    }
+  }
+
   [toolbar] {
     display: flex;
     flex-direction: column;
@@ -109,20 +123,6 @@ cit-ui {
 
     &[hidden] {
       display: none;
-    }
-
-    [controls] {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 2px;
-
-      &[grow] * {
-        flex-grow: 1;
-      }
-
-      &[column] {
-        width: 10px;
-      }
     }
 
     info-row {
@@ -343,12 +343,18 @@ cit-ui {
         background-color: var(--color-2);
         color: var(--color-1);
       }
-    }
 
-    &:not([round]) span {
-      font-size: 18px !important;
-      margin-right: 4px;
-      transform: translateX(-4px);
+      span {
+        font-size: 18px !important;
+        margin-right: 4px;
+        transform: translateX(-4px);
+        transition: .2s;
+
+        &[right-icon] {
+          transform: translateX(4px);
+          margin-left: 4px;
+        }
+      }
     }
 
     &[hidden] {

@@ -20,7 +20,7 @@ cit-left-panel {
   display: contents;
   img {
     margin-bottom: var(--gap-mid);
-    background-color: rgba(255, 255, 255, 0.4);
+    background-color: rgba(255, 254, 175, 1);
     border-radius: 3px;
     padding: 2px;
     cursor: pointer;

@@ -60,6 +60,13 @@ export class CitCollectionProfiles extends Symbiote {
         this.$['APP/collectionProfilesActive'] = false;
       }
     },
+
+    toggleUnfold: (e) => {
+      let itemComponent = e.target.closest('cit-collection-item');
+      if (itemComponent) {
+        itemComponent.classList.toggle('unfold');
+      }
+    },
   }
 
   close() {

@@ -60,6 +60,29 @@ cit-collection-profiles {
     background-color: rgba(0, 0, 0, .2);
     color: #fff;
     border-radius: 6px;
+
+    [controls] {
+      justify-content: space-between;
+    }
+
+    x-cfg {
+      margin-top: var(--gap-mid);
+    }
+
+    &:not(.unfold) {
+      x-cfg {
+        display: none;
+      }
+    }
+
+    &.unfold {
+      [controls] {
+        span[right-icon] {
+          transform: rotate(180deg);
+          transform-origin: 11px;
+        }
+      }
+    }
   }
 }
 `;
