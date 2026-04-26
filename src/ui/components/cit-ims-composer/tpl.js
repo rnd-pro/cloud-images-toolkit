@@ -61,7 +61,7 @@ export const IMS_COMPOSER_TPL = html`
               }}></code></pre>
           </div>
           <div ui-ctx="object-ui">
-            <x-cfg ${{'$.data': 'imsData', onchange: 'onObjectUiChange'}} editable></x-cfg>
+            <x-cfg ref="object_editor" ${{'$.data': 'imsData', oninput: 'onObjectUiChange', onchange: 'onObjectUiChange'}} editable></x-cfg>
           </div>
         </cit-ui-ctx>
       </div>

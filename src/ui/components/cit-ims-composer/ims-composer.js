@@ -72,12 +72,17 @@ export class ImsComposer extends Symbiote {
     },
 
     onObjectUiChange: (e) => {
-      let objUi = e.target.closest('x-cfg');
-      if (objUi.value) {
-        this.$.imsData = objUi.value;
-        this.$.srcData = JSON.stringify(objUi.value, undefined, 2);
-        this.#applyData(objUi.value);
+      if (this.cfgChangeTimeout) {
+        clearTimeout(this.cfgChangeTimeout);
       }
+      this.cfgChangeTimeout = setTimeout(() => {
+        let objUi = this.ref.object_editor;
+        if (objUi.value) {
+          this.$.imsData = objUi.value;
+          this.$.srcData = JSON.stringify(objUi.value, undefined, 2);
+          this.#applyData(objUi.value);
+        }
+      }, 1200);
     },
 
     onSrcDataCopy: async () => {
