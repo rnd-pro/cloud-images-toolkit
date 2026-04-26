@@ -18,6 +18,8 @@ env
 cit
 .last-run.json
 test-results/
+.context
+.project-graph-cache.json
 
 ## cloud images src folder
 cit-store/
