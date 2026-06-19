@@ -20,7 +20,7 @@ export default /*html*/ `<!DOCTYPE html>
     {
       "imports": {
         "@symbiotejs/symbiote": "https://cdn.jsdelivr.net/npm/@symbiotejs/symbiote@${symbioteVersion}/+esm",
-        "immersive-media-spots/wgt/viewer": "https://cdn.jsdelivr.net/npm/immersive-media-spots@${imsVersion}/wgt/viewer/index.js/+esm",
+        "immersive-media-spots/wgt/viewer/index.js": "https://cdn.jsdelivr.net/npm/immersive-media-spots@${imsVersion}/wgt/viewer/index.js/+esm",
         "immersive-media-spots/lib/dataToImage.js": "https://cdn.jsdelivr.net/npm/immersive-media-spots@${imsVersion}/lib/dataToImage.js/+esm",
         "immersive-media-spots/lib/imageToData.js": "https://cdn.jsdelivr.net/npm/immersive-media-spots@${imsVersion}/lib/imageToData.js/+esm"
       }

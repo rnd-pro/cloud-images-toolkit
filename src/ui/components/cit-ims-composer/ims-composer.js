@@ -2,7 +2,7 @@ import Symbiote from '@symbiotejs/symbiote';
 import { IMS_COMPOSER_CSS } from './css.js';
 import { IMS_COMPOSER_TPL } from './tpl.js';
 import { CFG, configs } from '../../../node/CFG.js';
-export { ImsViewer } from 'immersive-media-spots/wgt/viewer';
+export { ImsViewer } from 'immersive-media-spots/wgt/viewer/index.js';
 import { ImsDiffData } from 'immersive-media-spots/wgt/diff/ImsDiffData.js';
 import { ImsGalleryData } from 'immersive-media-spots/wgt/gallery/ImsGalleryData.js';
 import { ImsPanoData } from 'immersive-media-spots/wgt/pano/ImsPanoData.js';

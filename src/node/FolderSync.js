@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { configs, connectors } from './CFG.js';
 import { getAspectRatio } from '../iso/getAspectRatio.js';
-import imageSize from 'image-size';
+import { imageSize } from 'image-size';
 import { fillTpl } from '../iso/fillTpl.js';
 
 const DEFAULT_IMG_TYPES = ['png', 'jpg', 'jpeg', 'webp', 'gif', 'svg'];
