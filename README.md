@@ -231,6 +231,11 @@ If manually pre-configured ports (like `8080` or `8081`) are already in use by o
 ### Upload failures
 CIT automatically retries failed uploads up to 3 times. Check your API key and network connection if uploads consistently fail.
 
+## Known Issues
+
+### image-size DoS advisories ([GHSA-w3rx-r6r6-pgpr](https://github.com/advisories/GHSA-w3rx-r6r6-pgpr), [GHSA-5p2g-fcmc-qvqq](https://github.com/advisories/GHSA-5p2g-fcmc-qvqq))
+The `image-size` dependency has known infinite-loop DoS bugs in its ICNS, JXL, and HEIF parsers, with no patched release available yet. CIT only uses it to read dimensions of local files during folder sync, not attacker-supplied uploads, so exploitability is low. Tracked for update once an upstream fix ships.
+
 ## License
 
 MIT License © [rnd-pro.com](https://rnd-pro.com)
