@@ -3,13 +3,28 @@ import { test, expect } from '@playwright/test';
 test.describe('Dashboard UX Improvements Phase 4', () => {
   test('loader spinner is initially hidden', async ({ page }) => {
     await page.goto('/');
-    // The web component should initialize
-    await page.waitForTimeout(500);
-
     const loader = page.locator('cit-ui >> css=[loader]');
     await expect(loader).toBeAttached();
+    await expect(loader).toHaveAttribute('hidden', '');
+    await expect(loader).toBeHidden();
+  });
 
-    // Check that hidden applies 'display: none' from updated css
+  test('loader follows loading state changes', async ({ page }) => {
+    await page.goto('/');
+
+    const loader = page.locator('cit-ui [loader]');
+    await expect(loader).toHaveAttribute('hidden', '');
+
+    await page.locator('cit-ui').evaluate(ui => {
+      /** @type {import('@symbiotejs/symbiote').default} */ (ui).$.isLoading = true;
+    });
+    await expect(loader).not.toHaveAttribute('hidden');
+    await expect(loader).toBeVisible();
+
+    await page.locator('cit-ui').evaluate(ui => {
+      /** @type {import('@symbiotejs/symbiote').default} */ (ui).$.isLoading = false;
+    });
+    await expect(loader).toHaveAttribute('hidden', '');
     await expect(loader).toBeHidden();
   });
 

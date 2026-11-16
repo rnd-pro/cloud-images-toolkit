@@ -23,7 +23,7 @@ export const CIT_UI_TPL = html`
     </cit-tabs>
 
     <div dropzone ref="dropzone">
-      <cit-ui-ctx read-from="APP/uiCtx">
+      <cit-ui-ctx read-from="APP/uiCtx" process-inner-html="false">
 
         <div ui-ctx="images" ref="tiles_wrapper">
           <div loader ${{'@hidden': '!isLoading'}}>
@@ -92,7 +92,7 @@ export const CIT_UI_TPL = html`
 </div>
 
 <div panel column>
-  <cit-ui-ctx read-from="APP/uiCtx">
+  <cit-ui-ctx read-from="APP/uiCtx" process-inner-html="false">
     <cit-images-toolbar ${{'$.current': 'current', '$.hasSelection': 'hasSelection'}}></cit-images-toolbar>
     <cit-ims-toolbar ${{'$.current': 'current', '$.hasSelection': 'hasSelection'}}></cit-ims-toolbar>
   </cit-ui-ctx>
